@@ -1,0 +1,20 @@
+{
+  // Type checking for the Python backend (Pylance in VS Code reads this file too).
+  "venvPath": "backend",
+  "venv": ".venv",
+  "pythonVersion": "3.14",
+  "include": ["backend/app", "backend/tests"],
+  "exclude": ["**/node_modules", "**/__pycache__", "backend/.venv", "backend/.langgraph_api"],
+  "typeCheckingMode": "standard",
+  // LangGraph nodes read state keys written by earlier nodes; the graph's edges guarantee they are set.
+  "reportTypedDictNotRequiredAccess": false,
+  "executionEnvironments": [
+    {
+      // Tests reach into optional fields of factory-built fixtures; a None there fails the test anyway.
+      "root": "backend/tests",
+      "extraPaths": ["backend"],
+      "reportOptionalMemberAccess": false
+    },
+    { "root": "backend" }
+  ]
+}

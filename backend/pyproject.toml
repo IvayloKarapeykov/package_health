@@ -1,0 +1,17 @@
+[project]
+name = "package-health-advisor"
+version = "1.0.0"
+description = "LangGraph agent that answers: should I use this dependency? (npm, PyPI, Maven, NuGet, Go, crates.io, RubyGems, Packagist)"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]

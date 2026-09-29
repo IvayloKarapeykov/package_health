@@ -1,0 +1,9 @@
+fastapi>=0.141
+uvicorn[standard]>=0.53
+sse-starlette>=3.4
+httpx>=0.28
+pydantic>=2.13
+pydantic-settings>=2.15
+langgraph>=1.2
+langchain-openai>=1.6
+pyyaml>=6.0

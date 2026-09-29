@@ -1,0 +1,6 @@
+-r requirements.txt
+pytest>=9.1
+pytest-asyncio>=1.4
+respx>=0.23
+langgraph-cli[inmem]>=0.4
+ruff>=0.6
