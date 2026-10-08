@@ -1,0 +1,36 @@
+## The summary
+
+The top card gives the overall result, which is the worst verdict among the packages:
+
+| Headline | Means |
+| --- | --- |
+| Good to go | Every package is recommended |
+| Worth a closer look | At least one package needs caution |
+| Action needed | At least one package should be avoided |
+| Not enough data | No package had enough data for a verdict |
+
+Packages without enough data don't affect the headline. Below the summary you can filter by verdict,
+and packages are sorted worst first.
+
+## A package card
+
+| Part | What it tells you |
+| --- | --- |
+| Verdict badge | Recommended, caution, avoid, or unknown when there's too little data |
+| Score | The rule-based health score out of 100. See [How verdicts work](/docs/how-verdicts-work) |
+| `jev · 88%` or `rules` | Who decided the verdict, and Jev's confidence |
+| Summary and reasons | Why, written by the LLM, or from templates without an OpenRouter key |
+| Metrics | Adoption, last release, last commit, stars, open issues and PRs, vulnerabilities in the latest version, first published, repository status |
+| Vulnerabilities | Each advisory with its severity, and whether it affects your version |
+| Consider instead | Alternatives in the same registry, each confirmed to exist, with its adoption |
+| How the score was calculated | Every rule finding, with the points it cost |
+
+## When data is missing
+
+If a source fails, for example because GitHub's rate limit ran out, the card says which one and the
+rest of the report still works. The score and verdict use whatever was collected.
+
+<Note>
+  Without a GitHub token, GitHub data shares a limit of 60 requests an hour with everyone using the
+  site, and each package needs 2. [Add your own token](/docs/your-keys) to avoid running out.
+</Note>
