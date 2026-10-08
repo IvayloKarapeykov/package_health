@@ -10,13 +10,7 @@ export function SiteFooter() {
   return (
     <footer className="mx-auto max-w-6xl px-4 pt-10 pb-12">
       <div className="flex flex-col gap-6 border-t border-border pt-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          Free and open source under the MIT license. Made by{" "}
-          <a href="https://ivaylokarapeykov.com" target="_blank" rel="noreferrer" className="text-foreground hover:underline">
-            Ivaylo Karapeykov
-          </a>
-          .
-        </p>
+        <p>Free and open source under the MIT license.</p>
         <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
           <Link to="/app" className={LINK}>
             Analyze
