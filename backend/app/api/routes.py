@@ -6,7 +6,7 @@ from sse_starlette import EventSourceResponse, ServerSentEvent
 
 from app.agent.runner import AnalysisRunner
 from app.core.config import Settings, get_settings
-from app.domain.credentials import Credentials
+from app.domain.credentials import GITHUB_TOKEN_HEADER, OPENROUTER_KEY_HEADER, Credentials
 from app.domain.ecosystems import ECOSYSTEMS
 from app.domain.errors import InvalidInputError
 from app.domain.models import AnalysisReport
@@ -20,10 +20,6 @@ SSE_PING_SECONDS = 5
 
 
 # Callers' own keys, used for that request only. Missing ones fall back to the server's .env keys.
-GITHUB_TOKEN_HEADER = "X-GitHub-Token"
-OPENROUTER_KEY_HEADER = "X-OpenRouter-Key"
-
-
 def get_credentials(
     github_token: Annotated[
         str | None, Header(alias=GITHUB_TOKEN_HEADER, description="GitHub token: 5,000 requests/hour instead of 60")

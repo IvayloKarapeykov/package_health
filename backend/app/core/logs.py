@@ -7,7 +7,7 @@ import sys
 import uuid
 from contextvars import ContextVar
 from datetime import UTC, datetime
-from typing import Any, Literal
+from typing import Any, Literal, TextIO
 
 LogFormat = Literal["text", "json"]
 
@@ -81,8 +81,8 @@ def _text_value(value: Any) -> str:
     return json.dumps(text) if " " in text else text
 
 
-def configure_logging(level: str = "INFO", log_format: LogFormat = "text") -> None:
-    handler = logging.StreamHandler(sys.stdout)
+def configure_logging(level: str = "INFO", log_format: LogFormat = "text", stream: TextIO = sys.stdout) -> None:
+    handler = logging.StreamHandler(stream)
     handler.setFormatter(JsonFormatter() if log_format == "json" else TextFormatter())
     handler.addFilter(_ContextFilter())
 
