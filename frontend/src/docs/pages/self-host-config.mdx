@@ -63,3 +63,7 @@ Lists are written as JSON, for example `CORS_ORIGINS=["https://example.com"]`.
 | Variable | Description |
 | --- | --- |
 | `VITE_API_BASE_URL` | The backend's address, when it's on another domain, e.g. `https://api.example.com` |
+
+`frontend/vercel.json` also sets security headers. Its Content-Security-Policy only lets the page
+connect to its own domain and `https://api.vet.ivaylokarapeykov.com`, so change `connect-src` to your
+backend's address if you host the frontend yourself.
