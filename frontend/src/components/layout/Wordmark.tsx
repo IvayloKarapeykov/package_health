@@ -1,22 +1,18 @@
+import { Link } from "react-router"
+
 import { cn } from "@/lib/utils"
 
-interface WordmarkProps {
-  onClick: () => void
-  className?: string
-}
-
-export function Wordmark({ onClick, className }: WordmarkProps) {
+export function Wordmark({ className }: { className?: string }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label="Package Health Advisor — start over"
+    <Link
+      to="/"
+      aria-label="Package Health home"
       className={cn(
-        "font-mono text-sm font-semibold tracking-tight text-foreground/85 transition-colors hover:text-foreground",
+        "glass flex h-11 items-center rounded-full px-4 font-mono text-sm font-semibold tracking-tight text-foreground/85 transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
         className,
       )}
     >
       pkg<span className="text-brand-blue">/</span>health
-    </button>
+    </Link>
   )
 }

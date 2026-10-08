@@ -51,6 +51,9 @@ npm run dev
 
 Keys in `.env` are optional. Without them it still works, with the limits described below.
 
+In development the frontend sends `/api` requests to the backend on port 8000. When it's deployed
+separately, set `VITE_API_BASE_URL` to the backend's address, e.g. `https://api.example.com`.
+
 ## Your keys
 
 | Key | Without it | With it |
