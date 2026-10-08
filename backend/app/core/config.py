@@ -34,6 +34,8 @@ class Settings(BaseSettings):
 
     # HTTP server
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    # Host headers the MCP endpoint answers to (DNS rebinding protection). Add the public domain when deployed.
+    mcp_allowed_hosts: list[str] = ["localhost:*", "127.0.0.1:*", "[::1]:*"]
 
     # Observability
     log_level: str = "INFO"

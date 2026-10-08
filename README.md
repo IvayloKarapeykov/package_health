@@ -84,6 +84,41 @@ To analyze a file instead, send `{"mode": "manifest", "content": "<file contents
 detected from the content, or you can add `"filename": "pom.xml"`. Interactive docs are at
 `http://localhost:8000/docs`.
 
+## Use it from AI agents (MCP)
+
+The backend is also an [MCP](https://modelcontextprotocol.io) server, so coding agents like Claude
+Code, Cursor or Codex can check packages before they add them. It has two tools:
+
+- `check_package`: one package, e.g. `express` or `requests>=2.31`
+- `check_dependencies`: every dependency in a file's contents
+
+**Over HTTP**, at `/mcp` on a running backend. Pass your keys as headers:
+
+```bash
+claude mcp add --transport http package-health http://localhost:8000/mcp \
+  --header "X-GitHub-Token: github_pat_..."
+```
+
+**Over stdio**, launched by your agent. Keys come from the `env` block:
+
+```json
+{
+  "mcpServers": {
+    "package-health": {
+      "command": "/path/to/package_health/backend/.venv/bin/python",
+      "args": ["-m", "app.mcp_server"],
+      "env": {
+        "PYTHONPATH": "/path/to/package_health/backend",
+        "GITHUB_TOKEN": "github_pat_..."
+      }
+    }
+  }
+}
+```
+
+Without an OpenRouter key a check takes a second or two, and your agent can explain the verdict
+itself. With one, the explanations are written by the LLM, which takes much longer.
+
 ## How it works
 
 The backend is a [LangGraph](https://langchain-ai.github.io/langgraph/) agent behind FastAPI. It
@@ -123,6 +158,7 @@ All settings live in `backend/.env`; see [`.env.example`](backend/.env.example).
 | `USE_JEV_VERDICTS` | `true` | `false` lets the rules decide instead of Jev |
 | `MAX_PACKAGES` | `40` | Most dependencies analyzed per file |
 | `MAX_CONCURRENCY` | `8` | Packages analyzed in parallel |
+| `MCP_ALLOWED_HOSTS` | `["localhost:*", "127.0.0.1:*", "[::1]:*"]` | Host names the MCP endpoint accepts; add your domain when you deploy |
 | `LOG_FORMAT` | `text` | `json` for log aggregators |
 | `LANGSMITH_TRACING` | `false` | Trace runs in [LangSmith](https://smith.langchain.com) (needs `LANGSMITH_API_KEY`) |
 
