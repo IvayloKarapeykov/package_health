@@ -1,33 +1,19 @@
 import { FileCode2, PackageSearch, Search } from "lucide-react"
-import { type Ref, useEffect, useMemo, useState } from "react"
+import { type Ref, useMemo, useState } from "react"
 
 import { ResultsView } from "@/components/analysis/ResultsView"
 import { CodeBlock } from "@/components/editor/CodeBlock"
 import { SectionHeading } from "@/components/landing/SectionHeading"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { type Demo, DEMOS } from "@/demo"
+import { type DemoId, DEMOS, useDemo } from "@/demo"
 import { finishedState } from "@/hooks/useAnalysis"
 import { ECOSYSTEM_BY_ID } from "@/lib/ecosystems"
 import { detectManifestFormat } from "@/lib/manifestFormat"
 import type { AnalysisRequest } from "@/types/analysis"
 
 export function DemoSection({ ref }: { ref?: Ref<HTMLElement> }) {
-  const [activeId, setActiveId] = useState(DEMOS[0].id)
-  const [loaded, setLoaded] = useState<Record<string, Demo>>({})
-  const demo = loaded[activeId]
-
-  useEffect(() => {
-    if (loaded[activeId]) return
-    let cancelled = false
-    void DEMOS.find((entry) => entry.id === activeId)!
-      .load()
-      .then((result) => {
-        if (!cancelled) setLoaded((current) => ({ ...current, [activeId]: result }))
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [activeId, loaded])
+  const [activeId, setActiveId] = useState<DemoId>(DEMOS[0].id)
+  const demo = useDemo(activeId)
 
   const state = useMemo(() => (demo ? finishedState(demo.report, null) : null), [demo])
 
@@ -39,7 +25,7 @@ export function DemoSection({ ref }: { ref?: Ref<HTMLElement> }) {
         description="Three analyses run against the live registries, GitHub and OSV.dev, shown exactly as the app shows them."
       />
 
-      <Tabs value={activeId} onValueChange={setActiveId} className="mt-10 items-center">
+      <Tabs value={activeId} onValueChange={(value) => setActiveId(value as DemoId)} className="mt-10 items-center">
         <TabsList className="glass-inset max-sm:[&_svg]:hidden">
           {DEMOS.map((entry) => (
             <TabsTrigger key={entry.id} value={entry.id} className="font-mono text-xs">
