@@ -1,6 +1,7 @@
 import type { MDXComponents } from "mdx/types"
 
 import { Note, Tip, Warning } from "@/components/docs/Callout"
+import { CodeTabs } from "@/components/docs/CodeTabs"
 import { Anchor, Heading, Pre } from "@/components/docs/MdxElements"
 import { Steps } from "@/components/docs/Steps"
 
@@ -25,4 +26,5 @@ export const mdxComponents: MDXComponents = {
   Tip,
   Warning,
   Steps,
+  CodeTabs,
 }
