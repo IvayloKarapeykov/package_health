@@ -23,7 +23,6 @@ const STREAM_IDLE_TIMEOUT_MS = 15_000
 // A dev proxy or gateway answers with these when the backend itself is down.
 const UNREACHABLE_STATUSES = new Set([502, 503, 504])
 
-/** Streams progress events for an analysis until the server closes the stream. */
 export async function* streamAnalysis(
   request: AnalysisRequest,
   signal?: AbortSignal,

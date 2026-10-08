@@ -1,5 +1,3 @@
-"""Python manifests: requirements.txt, pyproject.toml (PEP 621, Poetry, PEP 735, uv) and Pipfile."""
-
 import re
 from typing import Any
 

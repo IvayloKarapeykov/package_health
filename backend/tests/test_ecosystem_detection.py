@@ -1,5 +1,3 @@
-"""Auto-detecting a single package's ecosystem: syntax first, then registry lookups ranked by adoption."""
-
 import httpx
 import pytest
 

@@ -1,9 +1,3 @@
-"""The adapter contract every package ecosystem implements.
-
-Everything ecosystem-specific (where metadata and adoption come from, how names and version
-specs look) lives behind this interface; the graph, scoring, Jev and the LLM stay generic.
-"""
-
 import re
 from abc import ABC, abstractmethod
 

@@ -1,9 +1,4 @@
-"""Client for Jev (TypeSafe) via OpenRouter's Decisions API.
-
-Jev is a decision model: given application state and a typed question it returns a typed
-answer with calibrated probabilities, never free text. See
-https://openrouter.ai/docs/guides/community/jev
-"""
+"""Jev, TypeSafe's decision model, via OpenRouter's Decisions API: https://openrouter.ai/docs/guides/community/jev"""
 
 from typing import Any
 

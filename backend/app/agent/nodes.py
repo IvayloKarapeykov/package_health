@@ -1,5 +1,3 @@
-"""Main-graph nodes: parse the input, fan out one package subgraph per dependency, merge results."""
-
 from collections import Counter
 
 from langgraph.types import Send
@@ -54,14 +52,12 @@ class AnalysisNodes:
 
     @staticmethod
     def fan_out(state: AnalysisState) -> list[Send] | str:
-        """Map step: one parallel package subgraph per dependency."""
         dependencies = state.get("dependencies") or []
         if not dependencies:
             return COMPILE_REPORT
         return [Send(ASSESS_PACKAGE, PackageInput(dependency=dependency)) for dependency in dependencies]
 
     async def compile_report(self, state: AnalysisState) -> AnalysisState:
-        """Reduce step: merge every branch's assessment into a single report."""
         order = {dep.key: index for index, dep in enumerate(state.get("dependencies") or [])}
         assessments = sorted(
             state.get("assessments") or [],

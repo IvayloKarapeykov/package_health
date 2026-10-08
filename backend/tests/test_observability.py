@@ -1,5 +1,3 @@
-"""Request IDs, structured logs and run telemetry."""
-
 import json
 import logging
 from typing import Literal

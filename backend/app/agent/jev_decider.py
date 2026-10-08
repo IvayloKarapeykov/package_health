@@ -1,5 +1,3 @@
-"""Verdicts from Jev, a fast decision model; falls back to the rule-based verdict on failure."""
-
 import logging
 
 from app.agent.prompts import VERDICT_CRITERIA, VERDICT_INSTRUCTIONS, build_verdict_state
@@ -17,7 +15,7 @@ class JevVerdictDecider:
         self._fallback = fallback
 
     async def decide(self, signals: PackageSignals, health: HealthScore) -> VerdictDecision:
-        # Hard rules (deprecated, archived, critical vulnerability) are not up for a vote.
+        # Critical findings (deprecated, archived, critical vulnerability) override Jev.
         if any(finding.impact == "critical" for finding in health.findings):
             return VerdictDecision(verdict=Verdict.AVOID, source="rules")
 

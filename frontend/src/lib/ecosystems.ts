@@ -1,6 +1,5 @@
 import type { Ecosystem, EcosystemChoice } from "@/types/analysis"
 
-/** An entry in the single-package ecosystem picker: a registry, or "Auto-detect". */
 export interface EcosystemChoiceMeta {
   id: EcosystemChoice
   /** The registry, e.g. "PyPI". Mirrors the backend's app/domain/ecosystems.py. */
@@ -88,7 +87,6 @@ export const ECOSYSTEM_BY_ID = Object.fromEntries(ECOSYSTEMS.map((meta) => [meta
   EcosystemMeta
 >
 
-/** The picker's options: auto-detect first, then every registry. */
 export const ECOSYSTEM_CHOICES: EcosystemChoiceMeta[] = [AUTO_ECOSYSTEM, ...ECOSYSTEMS]
 
 export const ECOSYSTEM_CHOICE_BY_ID = Object.fromEntries(ECOSYSTEM_CHOICES.map((meta) => [meta.id, meta])) as Record<
@@ -96,7 +94,6 @@ export const ECOSYSTEM_CHOICE_BY_ID = Object.fromEntries(ECOSYSTEM_CHOICES.map((
   EcosystemChoiceMeta
 >
 
-/** One realistic dependency file per supported format, for the "Load example" menu. */
 export const MANIFEST_EXAMPLES: { format: string; ecosystem: Ecosystem; content: string }[] = [
   {
     format: "package.json",

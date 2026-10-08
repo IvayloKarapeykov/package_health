@@ -1,5 +1,3 @@
-""".NET manifests: SDK-style project files (.csproj/.fsproj/.vbproj) and Directory.Packages.props."""
-
 from app.manifests.base import ManifestEntries, ManifestParser, load_xml
 
 

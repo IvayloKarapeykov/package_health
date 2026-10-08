@@ -17,10 +17,6 @@ interface WaveTrackProps {
   className?: string
 }
 
-/**
- * A progress track drawn as a flowing wave: a faint wave spans the full width and the
- * brand-gradient wave reveals itself up to `progress`, with optional milestone beads.
- */
 export function WaveTrack({ progress, stops = [], className }: WaveTrackProps) {
   const reveal = Math.round(Math.min(1, Math.max(0, progress)) * 100)
   const position = (index: number) => (stops.length > 1 ? (index / (stops.length - 1)) * 100 : 0)

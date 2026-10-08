@@ -1,5 +1,3 @@
-"""Per-request keys: which decider and explainer a request gets, and which runner serves it."""
-
 import httpx
 from pydantic import SecretStr
 

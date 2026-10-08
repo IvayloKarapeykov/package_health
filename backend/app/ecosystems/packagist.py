@@ -1,5 +1,3 @@
-"""Packagist (PHP / Composer): package metadata, abandonment status and downloads in one call."""
-
 import re
 from dataclasses import dataclass
 from typing import Any

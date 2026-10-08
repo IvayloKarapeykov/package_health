@@ -1,5 +1,3 @@
-"""crates.io (Rust): one crates.io API call carries metadata, versions and recent downloads."""
-
 import re
 from dataclasses import dataclass
 from typing import Any

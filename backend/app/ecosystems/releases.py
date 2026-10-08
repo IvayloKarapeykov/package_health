@@ -1,5 +1,3 @@
-"""Release-history statistics, computed the same way for every ecosystem."""
-
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime, timedelta

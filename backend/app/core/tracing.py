@@ -1,9 +1,5 @@
-"""LangSmith tracing, switched on from settings.
-
-LangGraph, LangChain and `@traceable` all read LangSmith's standard environment variables, so
-enabling tracing means exporting our settings (which may come from `.env`) under those names
-once, at startup, before the first run.
-"""
+"""LangGraph, LangChain and `@traceable` read LangSmith's environment variables, so tracing is
+enabled by exporting our settings under those names once, before the first run."""
 
 import logging
 import os
@@ -14,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 def configure_tracing(settings: Settings) -> bool:
-    """Returns whether tracing is on."""
     if not settings.langsmith_tracing:
         return False
     if settings.langsmith_api_key is None:

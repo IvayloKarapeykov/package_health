@@ -1,5 +1,3 @@
-"""PyPI (Python): the PyPI JSON API and pypistats.org for downloads."""
-
 import re
 from typing import Any
 
@@ -19,7 +17,6 @@ STATS_URL = "https://pypistats.org/api/packages"
 _INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
 _TYPED_CLASSIFIER = "Typing :: Typed"
 _REPO_URL_KEYS = ("source", "source code", "repository", "code", "github", "homepage", "home")
-# name[extras] followed by an optional version spec: "requests[socks]>=2.0"
 # name, optional [extras], then nothing or a PEP 440 specifier / environment marker.
 _SPEC_PATTERN = re.compile(r"^(?P<name>[A-Za-z0-9._-]+)\s*(?:\[[^\]]*\])?\s*(?P<spec>(?:[=<>!~;].*)?)$")
 

@@ -1,6 +1,3 @@
-"""Display metadata for each ecosystem: the single source of truth for names shown to users
-and used in prompts."""
-
 from dataclasses import dataclass
 
 from app.domain.models import Ecosystem

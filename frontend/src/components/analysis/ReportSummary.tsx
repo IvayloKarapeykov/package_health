@@ -12,7 +12,6 @@ interface ReportSummaryProps {
   skipped: SkippedDependency[]
 }
 
-/** Overall verdict and counts; shows live progress while branches are still running. */
 export function ReportSummary({ report, counts, completed, total, skipped }: ReportSummaryProps) {
   const running = report === null
   const meta = report ? VERDICT_META[report.overallVerdict] : null

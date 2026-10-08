@@ -1,7 +1,4 @@
-"""deps.dev (Google Open Source Insights): one API for versions, deprecation, licenses and links
-across Go, Maven, NuGet, RubyGems and more. Adapters for those ecosystems build on it and add
-their own adoption signal. https://docs.deps.dev/api/v3/
-"""
+"""deps.dev API (https://docs.deps.dev/api/v3/): versions, deprecation, licenses and links."""
 
 import re
 from dataclasses import dataclass

@@ -1,4 +1,3 @@
-/** The editor's look: transparent over the glass panel, brand-tinted, and theme-aware via CSS tokens. */
 
 import { HighlightStyle, syntaxHighlighting } from "@codemirror/language"
 import { EditorView } from "@codemirror/view"

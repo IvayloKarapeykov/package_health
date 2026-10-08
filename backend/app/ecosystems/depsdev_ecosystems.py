@@ -1,5 +1,3 @@
-"""Ecosystems whose metadata comes from deps.dev, each adding its own adoption signal."""
-
 import re
 from urllib.parse import quote
 

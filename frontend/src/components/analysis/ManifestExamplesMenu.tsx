@@ -14,7 +14,6 @@ interface ManifestExamplesMenuProps {
   onPick: (content: string) => void
 }
 
-/** "Load example" menu with one realistic dependency file per supported format. */
 export function ManifestExamplesMenu({ onPick }: ManifestExamplesMenuProps) {
   return (
     <DropdownMenu>

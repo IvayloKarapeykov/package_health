@@ -16,7 +16,6 @@ interface FindingsListProps {
   issues: SourceIssue[]
 }
 
-/** The rule-based checks behind the score, plus any data source that couldn't be reached. */
 export function FindingsList({ findings, issues }: FindingsListProps) {
   const [open, setOpen] = useState(false)
   if (!findings.length && !issues.length) return null

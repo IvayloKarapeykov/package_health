@@ -1,5 +1,3 @@
-"""LangGraph state definitions for the main graph and the per-package subgraph."""
-
 import operator
 from typing import Annotated, TypedDict
 
@@ -19,15 +17,13 @@ from app.services.advice import Explanation, VerdictDecision
 
 
 class AnalysisState(TypedDict, total=False):
-    # e.g. {"mode": "package", "ecosystem": "pypi", "package": "requests"}
-    #   or {"mode": "manifest", "content": "...", "filename": "go.mod", "includeDev": true}
     request: PackageRequest | ManifestRequest | dict
     ecosystem: Ecosystem
     manifest: str | None  # detected file format, e.g. "pyproject.toml"
     detection: EcosystemDetection | None  # set when a single package's ecosystem was auto-detected
     dependencies: list[DependencyRef]
     skipped: list[SkippedDependency]
-    # Reducer: every parallel package subgraph appends its result (the "reduce" step).
+    # Each package subgraph appends its assessment.
     assessments: Annotated[list[PackageAssessment], operator.add]
     report: AnalysisReport
 
@@ -45,8 +41,6 @@ class PackageOutput(TypedDict):
 
 
 class PackageUpdate(TypedDict, total=False):
-    """What the subgraph's nodes write; each node returns only the keys it produces."""
-
     signals: PackageSignals
     health: HealthScore
     decision: VerdictDecision

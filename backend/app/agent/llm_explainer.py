@@ -1,5 +1,3 @@
-"""LLM-backed explainer. Falls back to the heuristic explainer whenever the model call fails."""
-
 import logging
 from typing import Literal
 

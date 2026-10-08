@@ -1,5 +1,3 @@
-"""Client for OSV.dev, Google's open vulnerability database."""
-
 from typing import Any
 
 import httpx

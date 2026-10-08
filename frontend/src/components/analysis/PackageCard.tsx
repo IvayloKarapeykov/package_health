@@ -136,7 +136,6 @@ export function PackageCard({ assessment }: { assessment: PackageAssessment }) {
   )
 }
 
-/** License plus whichever registry-specific extras this ecosystem exposes. */
 function registryDetails(registry: RegistryInfo): [string, string][] {
   const details: [string, string | null][] = [
     ["license", registry.license ?? "none"],

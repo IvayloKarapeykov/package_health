@@ -2,7 +2,6 @@ import { WaveLine } from "@/components/effects/WaveLine"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ECOSYSTEMS } from "@/lib/ecosystems"
 
-/** Placeholder while an "auto" package is looked up across registries, before its analysis is planned. */
 export function DetectingCard({ spec }: { spec: string }) {
   return (
     <Card aria-busy>

@@ -1,5 +1,3 @@
-"""Manifest parsers and format detection, one realistic file per format."""
-
 import json
 
 import pytest

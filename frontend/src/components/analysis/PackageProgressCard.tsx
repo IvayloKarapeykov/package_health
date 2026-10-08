@@ -13,7 +13,6 @@ interface PackageProgressCardProps {
   step: AssessmentStep | undefined
 }
 
-/** Placeholder for a package whose branch is still running, showing the step it is on. */
 export function PackageProgressCard({ dependency, step }: PackageProgressCardProps) {
   const current = stepIndex(step)
   const queued = current === -1

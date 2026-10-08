@@ -5,7 +5,6 @@ interface WordmarkProps {
   className?: string
 }
 
-/** The product name as a quiet, typographic mark. Clicking it returns to the start screen. */
 export function Wordmark({ onClick, className }: WordmarkProps) {
   return (
     <button

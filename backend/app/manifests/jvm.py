@@ -1,5 +1,3 @@
-"""JVM manifests: Maven pom.xml and Gradle build.gradle / build.gradle.kts."""
-
 import re
 
 from app.domain.models import DependencyKind

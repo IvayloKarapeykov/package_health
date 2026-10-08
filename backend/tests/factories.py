@@ -1,5 +1,3 @@
-"""Builders for domain objects used across tests."""
-
 from datetime import timedelta
 
 from app.core.time import utc_now

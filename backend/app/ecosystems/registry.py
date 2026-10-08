@@ -1,5 +1,3 @@
-"""Looks up the adapter for an ecosystem id."""
-
 from collections.abc import Iterable
 
 from app.domain.errors import InvalidInputError

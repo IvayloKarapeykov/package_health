@@ -1,4 +1,3 @@
-/** Syntax support per dependency file format, each loaded on first use. */
 
 import { StreamLanguage, type StreamParser } from "@codemirror/language"
 import type { Extension } from "@codemirror/state"

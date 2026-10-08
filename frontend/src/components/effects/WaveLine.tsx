@@ -20,7 +20,6 @@ interface WaveLineProps {
   duration?: string
 }
 
-/** A single sine wave that fills its container, optionally flowing sideways. */
 export function WaveLine({
   className,
   style,

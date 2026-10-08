@@ -9,7 +9,6 @@ interface ThemeToggleProps {
   className?: string
 }
 
-/** A floating glass button that switches between light and dark mode. */
 export function ThemeToggle({ theme, onToggle, className }: ThemeToggleProps) {
   const Icon = theme === "dark" ? Sun : Moon
   return (

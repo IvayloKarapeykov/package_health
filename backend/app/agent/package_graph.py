@@ -1,9 +1,3 @@
-"""The per-package subgraph: every dependency runs through it in parallel.
-
-    START → collect ─┬─ (found) ─────▶ score → decide → explain ─┬─ (alternatives) → verify_alternatives ─┐
-                     └─ (not found / error) ─────────────────────┴─ (none) ─────────────────────────────▶ finalize → END
-"""
-
 import functools
 import logging
 from collections.abc import Awaitable, Callable
@@ -86,7 +80,6 @@ class PackageNodes:
     async def finalize(self, state: PackageState) -> PackageUpdate:
         return {"assessments": [build_assessment(state)]}
 
-    # --- Routing ---------------------------------------------------------------------------
 
     @staticmethod
     def after_collect(state: PackageState) -> str:

@@ -1,5 +1,3 @@
-"""What each graph run reports about itself: trace metadata going in, a summary log line coming out."""
-
 from collections import Counter
 from typing import Any
 
@@ -25,7 +23,6 @@ def run_config(base: RunnableConfig, request: PackageRequest | ManifestRequest) 
 
 
 def run_summary(report: AnalysisReport, duration_ms: int) -> dict[str, Any]:
-    """One line that says whether the advisor is healthy: volume, speed and every silent fallback."""
     assessments = report.assessments
     upstream_issues = Counter(issue.source for a in assessments for issue in a.signals.issues)
     return {
@@ -36,7 +33,7 @@ def run_summary(report: AnalysisReport, duration_ms: int) -> dict[str, Any]:
         "duration_ms": duration_ms,
         "overall": report.overall_verdict.value,
         "verdicts": {verdict.value: count for verdict, count in report.counts.items() if count},
-        # Degradation that users never see as an error: rules instead of Jev, templates instead of the LLM.
+        # Silent fallbacks: rules instead of Jev, templates instead of the LLM.
         "verdict_sources": dict(Counter(a.verdict_source for a in assessments if a.score is not None)),
         "explanation_sources": dict(Counter(a.explanation_source for a in assessments if a.score is not None)),
         "upstream_issues": dict(upstream_issues),

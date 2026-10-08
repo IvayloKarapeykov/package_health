@@ -1,5 +1,3 @@
-"""HTTP routes."""
-
 from collections.abc import AsyncIterator
 from typing import Annotated
 
@@ -21,8 +19,7 @@ router = APIRouter(prefix="/api")
 SSE_PING_SECONDS = 5
 
 
-# Callers bring their own keys: GitHub for its rate limit, OpenRouter for AI verdicts and explanations.
-# Used for that request only, never stored or logged. Without them the server's own keys apply, if it has any.
+# Callers' own keys, used for that request only. Missing ones fall back to the server's .env keys.
 GITHUB_TOKEN_HEADER = "X-GitHub-Token"
 OPENROUTER_KEY_HEADER = "X-OpenRouter-Key"
 

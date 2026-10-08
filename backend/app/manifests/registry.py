@@ -1,5 +1,3 @@
-"""Picks the right manifest parser from a file name or, failing that, from the content itself."""
-
 from app.domain.errors import InvalidInputError
 from app.manifests.base import ManifestParser
 from app.manifests.dotnet import CsprojParser

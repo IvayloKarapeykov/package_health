@@ -8,7 +8,6 @@ interface DetectionNoteProps {
   onSwitch?: (ecosystem: Ecosystem) => void
 }
 
-/** Says which registry "auto" picked, and offers the other registries that publish the same name. */
 export function DetectionNote({ detection, onSwitch }: DetectionNoteProps) {
   return (
     <div className="flex flex-wrap items-center gap-1.5 pl-1 text-xs text-muted-foreground">

@@ -1,5 +1,3 @@
-"""Shared HTTP plumbing for the upstream API clients (npm, GitHub, OSV)."""
-
 import logging
 import time
 from typing import Any
@@ -44,8 +42,6 @@ def create_http_client(timeout_seconds: float) -> httpx.AsyncClient:
 
 
 class JsonHttpClient:
-    """Performs JSON requests against one upstream source and maps failures to `UpstreamError`."""
-
     def __init__(
         self,
         http: httpx.AsyncClient,

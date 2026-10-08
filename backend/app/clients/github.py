@@ -1,5 +1,3 @@
-"""Client for the GitHub REST API (works unauthenticated at 60 requests/hour)."""
-
 import asyncio
 import re
 

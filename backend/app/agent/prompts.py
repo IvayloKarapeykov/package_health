@@ -1,13 +1,9 @@
-"""Prompts and prompt-input builders for the verdict decider (Jev) and the explainer (LLM)."""
-
 import json
 from typing import Any
 
 from app.core.time import days_since, utc_now
 from app.domain.ecosystems import ECOSYSTEMS
 from app.domain.models import Adoption, HealthScore, PackageAssessment, PackageSignals, Verdict
-
-# --- Verdict (Jev) ---------------------------------------------------------------------------
 
 VERDICT_INSTRUCTIONS = "Should a software team adopt this package as a new dependency today?"
 
@@ -94,8 +90,6 @@ def _ago(days: int | None) -> str:
     years = round(days / 365)
     return f"{years} year{'s' if years != 1 else ''} ago"
 
-
-# --- Explanation (LLM) -----------------------------------------------------------------------
 
 EXPLAIN_SYSTEM_PROMPT = """\
 You are a senior software engineer explaining to a team why a package received its verdict. The \

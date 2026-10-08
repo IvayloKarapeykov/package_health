@@ -1,5 +1,3 @@
-"""API keys a caller brings with a request, so analyses run on their quotas and credits, not the server's."""
-
 from dataclasses import dataclass
 
 from pydantic import SecretStr
@@ -20,7 +18,7 @@ class Credentials:
         return self.github_token is None and self.openrouter_api_key is None
 
     def or_defaults(self, github_token: SecretStr | None, openrouter_api_key: SecretStr | None) -> "Credentials":
-        """These keys, falling back to the given (server-configured) ones where absent."""
+        """Falls back to the given server keys where absent."""
         return Credentials(
             github_token=self.github_token or github_token,
             openrouter_api_key=self.openrouter_api_key or openrouter_api_key,

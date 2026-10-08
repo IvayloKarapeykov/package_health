@@ -1,5 +1,3 @@
-"""Ruby manifests: Bundler's Gemfile (with development/test groups)."""
-
 import re
 
 from app.manifests.base import ManifestEntries, ManifestParser

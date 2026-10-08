@@ -1,8 +1,3 @@
-"""Domain models shared by the clients, services, agent graph and API.
-
-All models serialize with camelCase keys so the TypeScript frontend can consume them as-is.
-"""
-
 from datetime import datetime
 from enum import StrEnum
 from typing import Literal
@@ -35,7 +30,6 @@ class Severity(StrEnum):
     UNKNOWN = "unknown"
 
 
-# The package ecosystems (registries) the advisor understands.
 Ecosystem = Literal["npm", "pypi", "cargo", "go", "maven", "nuget", "rubygems", "packagist"]
 
 DependencyKind = Literal["direct", "prod", "dev", "peer", "optional"]
@@ -45,9 +39,6 @@ DataSource = Literal["registry", "adoption", "github", "osv", "llm"]
 AssessmentStep = Literal["registry", "activity", "scoring", "deciding", "explaining", "alternatives"]
 # Who picked the verdict: the Jev decision model, or the rule-based scorer.
 VerdictSource = Literal["jev", "rules"]
-
-
-# --- Input -----------------------------------------------------------------------------------
 
 
 class DependencyRef(CamelModel):
@@ -74,9 +65,6 @@ class EcosystemDetection(CamelModel):
     ecosystem: Ecosystem
     # Other registries that publish a package with the same name, most used first.
     also_found_in: list[Ecosystem] = Field(default_factory=list)
-
-
-# --- Raw signals -----------------------------------------------------------------------------
 
 
 class RegistryInfo(CamelModel):
@@ -161,9 +149,6 @@ class PackageSignals(CamelModel):
     @property
     def exists(self) -> bool:
         return self.registry is not None
-
-
-# --- Evaluation ------------------------------------------------------------------------------
 
 
 class Finding(CamelModel):

@@ -1,9 +1,3 @@
-"""npm-registry manifests: package.json, package-lock.json (npm) and pnpm-lock.yaml (pnpm).
-
-Lockfiles give the exact installed versions, which makes the "your version is vulnerable" check
-precise instead of relying on the floor of a range.
-"""
-
 import re
 from typing import Any
 

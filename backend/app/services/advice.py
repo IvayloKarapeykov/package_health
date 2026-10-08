@@ -1,10 +1,3 @@
-"""The two halves of an opinion — the verdict and its explanation — plus rule-based fallbacks.
-
-A `VerdictDecider` picks recommended / caution / avoid; an `Explainer` then justifies that
-verdict in prose and suggests alternatives. Keeping them separate lets a fast decision model
-choose while a language model writes.
-"""
-
 from collections import Counter
 from typing import Literal, Protocol
 

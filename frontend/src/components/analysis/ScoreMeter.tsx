@@ -8,7 +8,6 @@ interface ScoreMeterProps {
   className?: string
 }
 
-/** The rule-based health score (0–100) as a number plus a thin bar. */
 export function ScoreMeter({ score, verdict, className }: ScoreMeterProps) {
   if (score == null) return null
   return (

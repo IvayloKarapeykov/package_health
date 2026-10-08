@@ -14,7 +14,6 @@ interface RecentSearchesProps {
   className?: string
 }
 
-/** Past searches saved in this browser; opening one shows its saved report instantly. */
 export function RecentSearches({ searches, onOpen, onRemove, onClear, className }: RecentSearchesProps) {
   if (!searches.length) return null
   return (

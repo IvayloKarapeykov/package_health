@@ -1,7 +1,4 @@
-"""npm (JavaScript / TypeScript): the npm registry and the npm downloads API.
-
-pnpm, Yarn and Bun install from this same registry, so they share this adapter.
-"""
+"""pnpm, Yarn and Bun install from the npm registry too, so they share this adapter."""
 
 import re
 from typing import Any

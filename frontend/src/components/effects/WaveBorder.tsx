@@ -27,7 +27,6 @@ const LAYERS: WaveLayer[] = [
 ]
 const ENERGIZED_MULTIPLIER = 3.5
 
-/** Wraps its child in an animated, wavy blue→cyan outline. */
 export function WaveBorder({ children, className, radius = 24, energized = false }: WaveBorderProps) {
   const gradientId = useId()
   const containerRef = useRef<HTMLDivElement>(null)

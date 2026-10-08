@@ -1,9 +1,4 @@
-"""Deterministic, explainable health scoring.
-
-The score is a transparent baseline: each rule emits findings with a penalty, the score is
-100 minus the penalties, and "critical" findings force an AVOID verdict. The findings feed the
-verdict decider (Jev) and the explainer (LLM); the verdict itself is the fallback when Jev is off.
-"""
+"""Rule-based health score: 100 minus each finding's penalty. A critical finding forces AVOID."""
 
 import itertools
 import math

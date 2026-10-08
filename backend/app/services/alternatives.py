@@ -1,5 +1,4 @@
-"""Grounds suggested alternatives in reality: drops names that don't exist in the package's
-own registry, and attaches each survivor's link and adoption."""
+"""Drops suggested alternatives that don't exist in the package's registry (LLMs invent names)."""
 
 import asyncio
 from typing import Protocol

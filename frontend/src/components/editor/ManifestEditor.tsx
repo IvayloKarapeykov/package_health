@@ -25,7 +25,6 @@ export interface ManifestEditorProps {
   ariaLabel: string
 }
 
-/** A small code editor for dependency files: line numbers, highlighting for the detected format, folding. */
 export default function ManifestEditor({ value, onChange, placeholder: hint = "", ariaLabel }: ManifestEditorProps) {
   const hostRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
@@ -113,7 +112,6 @@ export default function ManifestEditor({ value, onChange, placeholder: hint = ""
   )
 }
 
-/** The IDE-style file tab: detected file name, its registry and the line count. */
 function EditorTab({ name, registry, lines }: { name?: string; registry?: string; lines: number }) {
   return (
     <div className="flex h-9 items-center gap-2 border-b border-border/60 px-3 text-xs">

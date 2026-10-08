@@ -1,5 +1,3 @@
-"""The collaborators the graph's nodes depend on, injected by the composition root."""
-
 from dataclasses import dataclass
 
 from app.services.advice import Explainer, VerdictDecider

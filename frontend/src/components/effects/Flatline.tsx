@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils"
 const WIDTH = 320
 const HEIGHT = 56
 
-/** A brand-colored wave that fades into a flat line, drawn in on mount. Used for failures. */
 export function Flatline({ className }: { className?: string }) {
   const gradientId = useId()
   return (

@@ -1,5 +1,3 @@
-"""Rust manifests: Cargo.toml (dependencies, dev/build dependencies, workspaces, targets)."""
-
 from typing import Any
 
 from app.domain.models import DependencyKind

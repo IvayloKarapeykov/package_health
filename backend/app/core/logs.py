@@ -1,8 +1,4 @@
-"""Logging setup: a request ID on every line, and JSON or human-readable output.
-
-Structured data goes in `extra={"fields": {...}}`; both formatters render it (JSON as keys,
-text as `key=value` pairs), so call sites never care which format is active.
-"""
+"""Structured fields go in `extra=fields(...)`; the JSON and text formatters both render them."""
 
 import json
 import logging
@@ -38,7 +34,6 @@ def current_request_id() -> str | None:
 
 
 def fields(**values: Any) -> dict[str, Any]:
-    """`logger.info("…", extra=fields(a=1))`: structured fields for either formatter."""
     return {"fields": values}
 
 

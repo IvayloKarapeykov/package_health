@@ -1,5 +1,3 @@
-"""A small in-memory TTL cache so repeated analyses don't burn upstream rate limits."""
-
 import time
 from collections import OrderedDict
 from collections.abc import Awaitable, Callable
@@ -30,7 +28,7 @@ class TTLCache:
             self._entries.popitem(last=False)
 
     async def get_or_load[T](self, key: str, loader: Callable[[], Awaitable[T]]) -> T:
-        """Return the cached value for `key`, or load, cache and return it. Failures are not cached."""
+        """Failures are not cached."""
         cached = self.get(key)
         if cached is not None:
             return cached

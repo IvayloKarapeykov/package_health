@@ -1,5 +1,3 @@
-"""Go manifests: go.mod (direct requirements only; `// indirect` ones are transitive)."""
-
 import re
 
 from app.manifests.base import ManifestEntries, ManifestParser

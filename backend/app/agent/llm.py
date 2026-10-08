@@ -1,4 +1,4 @@
-"""Chat model factory. OpenRouter exposes an OpenAI-compatible API, so ChatOpenAI works as-is."""
+"""OpenRouter's API is OpenAI-compatible, so ChatOpenAI works with a different base URL."""
 
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
@@ -9,7 +9,6 @@ APP_TITLE = "Package Health Advisor"
 
 
 def build_chat_model(settings: Settings, api_key: SecretStr | None) -> ChatOpenAI | None:
-    """The configured chat model on `api_key`, or None without a key."""
     if api_key is None:
         return None
     return ChatOpenAI(

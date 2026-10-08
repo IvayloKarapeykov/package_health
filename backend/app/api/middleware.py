@@ -1,5 +1,3 @@
-"""Per-request context: a request ID for logs, traces and the client, plus one log line per request."""
-
 import logging
 import time
 

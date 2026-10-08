@@ -1,5 +1,3 @@
-"""What the user asks the advisor to analyze."""
-
 from typing import Annotated, Literal
 
 from pydantic import Field

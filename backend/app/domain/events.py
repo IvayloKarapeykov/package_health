@@ -1,5 +1,3 @@
-"""Progress events streamed to the client while an analysis runs."""
-
 from typing import Literal
 
 from app.domain.models import (

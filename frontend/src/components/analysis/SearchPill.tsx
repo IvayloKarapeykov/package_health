@@ -12,7 +12,6 @@ interface SearchPillProps {
   className?: string
 }
 
-/** The search panel folded into a floating pill; clicking it opens the panel again. */
 export function SearchPill({ summary, running, failed = false, onClick, className }: SearchPillProps) {
   return (
     <button

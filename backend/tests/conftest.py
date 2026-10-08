@@ -1,5 +1,3 @@
-"""Shared fixtures."""
-
 import httpx
 import pytest
 

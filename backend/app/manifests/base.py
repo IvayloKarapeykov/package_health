@@ -1,9 +1,5 @@
-"""The contract every manifest parser implements, plus shared parsing helpers.
-
-A parser turns one dependency file (package.json, requirements.txt, go.mod, ...) into raw
-entries. Name normalization, validation, de-duplication and limits happen afterwards, in one
-place (`app.services.package_input`), using the ecosystem's adapter.
-"""
+"""Parsers only extract raw entries. Normalization, validation and limits happen in
+`app.services.package_input`, using the ecosystem's adapter."""
 
 import json
 import tomllib
@@ -59,9 +55,6 @@ class ManifestParser(ABC):
     @abstractmethod
     def parse(self, text: str, *, include_dev: bool) -> ManifestEntries:
         """Extract dependencies. Raises InvalidInputError if the file can't be read."""
-
-
-# --- Shared helpers --------------------------------------------------------------------------
 
 
 def load_json(text: str, file: str) -> Any:

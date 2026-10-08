@@ -1,5 +1,3 @@
-"""Ecosystem adapters: registry document parsing, names and version specs."""
-
 import httpx
 import pytest
 import respx
@@ -26,9 +24,6 @@ def adapters(http: httpx.AsyncClient):
         "go": GoAdapter(depsdev, http, cache),
         "maven": MavenAdapter(depsdev, http, cache),
     }
-
-
-# --- npm -------------------------------------------------------------------------------------
 
 
 def test_npm_registry_document() -> None:
@@ -62,9 +57,6 @@ def test_npm_registry_document() -> None:
 def test_npm_unpublished_package_is_not_found() -> None:
     with pytest.raises(NotFoundError):
         parse_registry_document({"time": {"unpublished": {}}}, registry_url="")
-
-
-# --- PyPI ------------------------------------------------------------------------------------
 
 
 def test_pypi_document_reads_status_license_and_repository() -> None:
@@ -128,9 +120,6 @@ async def test_pypi_falls_back_to_dependents_when_download_stats_are_rate_limite
     assert (adoption.weekly_downloads, adoption.dependents) == (None, 42)
 
 
-# --- crates.io / Packagist -------------------------------------------------------------------
-
-
 def test_crate_document_ignores_yanked_versions() -> None:
     document = {
         "crate": {"default_version": "1.1.0", "description": "Demo", "repository": "https://github.com/acme/demo"},
@@ -162,9 +151,6 @@ def test_packagist_abandoned_packages_are_deprecated(abandoned, expected) -> Non
         assert info.deprecated is None
     else:
         assert expected in (info.deprecated or "")
-
-
-# --- Names and specs across ecosystems -------------------------------------------------------
 
 
 @pytest.mark.parametrize(

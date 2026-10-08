@@ -1,5 +1,3 @@
-"""Turns user input (one package, or a dependency manifest) into dependencies to analyze."""
-
 from dataclasses import dataclass, field
 
 from app.domain.errors import InvalidInputError

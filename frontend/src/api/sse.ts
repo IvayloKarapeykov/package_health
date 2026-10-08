@@ -1,4 +1,3 @@
-/** No bytes (not even keep-alive comments) arrived within the idle timeout. */
 export class StreamIdleError extends Error {}
 
 export interface ReadOptions {
@@ -11,9 +10,7 @@ export interface ServerSentEvent {
   data: string
 }
 
-/**
- * Parses a `text/event-stream` body. Unlike `EventSource`, this works with POST requests.
- */
+/** Unlike `EventSource`, this works with POST requests. */
 export async function* readServerSentEvents(
   body: ReadableStream<Uint8Array>,
   { idleTimeoutMs }: ReadOptions = {},

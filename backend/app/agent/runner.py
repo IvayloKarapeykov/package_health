@@ -1,5 +1,3 @@
-"""Runs the graph and translates its node updates into client-facing progress events."""
-
 import logging
 import time
 from collections.abc import AsyncIterator
@@ -71,7 +69,7 @@ class AnalysisRunner:
                 logger.info("Analysis cancelled by the client", extra=fields(duration_ms=_ms(started)))
 
     async def run(self, request: PackageRequest | ManifestRequest) -> AnalysisReport:
-        """Run to completion. Raises InvalidInputError for bad input."""
+        """Raises InvalidInputError for bad input."""
         started = time.perf_counter()
         final_state = await self._graph.ainvoke({"request": request}, config=run_config(self._config, request))
         report: AnalysisReport = final_state["report"]

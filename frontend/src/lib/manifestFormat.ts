@@ -1,12 +1,7 @@
-/**
- * Guesses a pasted dependency file's format from its content, for syntax highlighting and the
- * editor's file tab. The backend's parsers (app/manifests) remain the source of truth; this
- * follows the same priority order so the two normally agree.
- */
+/** Follows the backend parsers' detection order (app/manifests), so the two normally agree. */
 
 import type { Ecosystem } from "@/types/analysis"
 
-/** Which highlighter to use. */
 export type Syntax = "json" | "xml" | "yaml" | "toml" | "ruby" | "groovy" | "kotlin" | "gomod" | "requirements"
 
 export interface ManifestFormat {

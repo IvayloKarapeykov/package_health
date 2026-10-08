@@ -1,10 +1,6 @@
 /**
- * Recent searches, persisted in localStorage.
- *
- * Two layers keep startup cheap:
- *  - a small index (label, verdict, time) that the recent list renders from, read once;
- *  - one entry per search holding the request and full report, read only when it is opened.
- * The oldest searches are evicted past MAX_SEARCHES, or when storage runs out of room.
+ * A small index (label, verdict, time) is read once for the recent list; each search's full
+ * report is stored separately and read only when it is opened.
  */
 
 import { ECOSYSTEM_BY_ID } from "@/lib/ecosystems"
@@ -36,8 +32,6 @@ export interface SavedSearch {
   detection: EcosystemDetection | null
   savedAt: number
 }
-
-// --- Index cache + subscriptions (the shape useSyncExternalStore expects) -----------------------
 
 let index: SearchSummary[] | null = null
 const listeners = new Set<() => void>()
@@ -78,8 +72,6 @@ function readIndex(): SearchSummary[] {
   return Array.isArray(stored) ? (stored as SearchSummary[]) : []
 }
 
-// --- Reads and writes ------------------------------------------------------------------------------
-
 export function saveSearch(request: AnalysisRequest, report: AnalysisReport, detection: EcosystemDetection | null) {
   const summary = summarize(request, report)
   const entry: SavedSearch = { request, report, detection, savedAt: summary.savedAt }
@@ -118,8 +110,6 @@ export function clearSearches() {
   for (const search of getSearches()) remove(entryKey(search.id))
   setIndex([])
 }
-
-// --- Identity --------------------------------------------------------------------------------------
 
 function summarize(request: AnalysisRequest, report: AnalysisReport): SearchSummary {
   const savedAt = Date.now()

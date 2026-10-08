@@ -1,11 +1,4 @@
-"""The package-health graph: a map-reduce over dependencies using LangGraph's Send API.
-
-    START → parse_input ─┬─ Send → [assess_package subgraph] ─┐
-                         ├─ Send → [assess_package subgraph] ─┼→ compile_report → END
-                         └─ Send → [assess_package subgraph] ─┘
-
-Each `assess_package` is the per-package subgraph in `package_graph.py`.
-"""
+"""Map-reduce over dependencies: one `assess_package` subgraph per dependency, sent with `Send`."""
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph

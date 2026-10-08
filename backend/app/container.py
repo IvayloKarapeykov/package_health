@@ -1,8 +1,4 @@
-"""Composition root: wires settings, clients, services and the graph together.
-
-Keys come per request (see `Credentials`), with the server's `.env` keys as the fallback. Everything that
-doesn't need a key — HTTP client, cache, registries, OSV — is built once and shared by every request.
-"""
+"""Composition root. Clients that need no key are shared; anything that needs one is built per request."""
 
 from dataclasses import dataclass
 
@@ -75,7 +71,7 @@ def build_ecosystems(http: httpx.AsyncClient, cache: TTLCache) -> EcosystemRegis
 
 @dataclass(frozen=True)
 class Upstreams:
-    """The clients that need no key. Shared, so one cache serves every caller (it holds public data only)."""
+    """Shared by every caller; the cache only holds public data."""
 
     http: httpx.AsyncClient
     cache: TTLCache
@@ -105,8 +101,7 @@ def build_services(settings: Settings, upstreams: Upstreams, credentials: Creden
 
 
 class RunnerFactory:
-    """The analysis runner for a request's credentials. Requests without keys share one runner built at
-    startup; a request with keys gets its own, so keys never outlive the request or leak between callers."""
+    """Keyless requests share one runner. A request with keys gets its own, so keys never leak between callers."""
 
     def __init__(self, settings: Settings, http: httpx.AsyncClient) -> None:
         self._settings = settings

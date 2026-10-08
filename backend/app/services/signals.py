@@ -1,6 +1,3 @@
-"""Collects every health signal for one package: its registry (via the ecosystem adapter),
-GitHub and OSV.dev, concurrently where possible."""
-
 import asyncio
 from collections.abc import Awaitable, Callable
 from typing import Protocol

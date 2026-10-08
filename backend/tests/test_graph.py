@@ -1,6 +1,3 @@
-"""Graph-level tests with fake collaborators: fan-out into the package subgraph, routing inside it,
-reduce, streaming and failure isolation."""
-
 import asyncio
 
 import pytest

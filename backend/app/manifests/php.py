@@ -1,5 +1,3 @@
-"""PHP manifests: Composer's composer.json."""
-
 from app.domain.errors import InvalidInputError
 from app.domain.models import DependencyKind
 from app.manifests.base import ManifestEntries, ManifestParser, load_json, try_json

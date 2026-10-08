@@ -1,5 +1,3 @@
-"""Date helpers shared across clients and scoring."""
-
 from datetime import UTC, datetime
 
 

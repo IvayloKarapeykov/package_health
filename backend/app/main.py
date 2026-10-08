@@ -1,5 +1,3 @@
-"""FastAPI entrypoint: `uvicorn app.main:app --reload`."""
-
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
