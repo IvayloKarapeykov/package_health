@@ -1,0 +1,872 @@
+{
+  "request": {
+    "mode": "manifest",
+    "content": "{\n  \"name\": \"storefront\",\n  \"dependencies\": {\n    \"express\": \"^4.19.2\",\n    \"lodash\": \"^4.17.21\",\n    \"moment\": \"^2.29.4\",\n    \"request\": \"^2.88.2\"\n  },\n  \"devDependencies\": {\n    \"tslint\": \"^6.1.3\"\n  }\n}\n",
+    "filename": "package.json",
+    "includeDev": true
+  },
+  "report": {
+    "ecosystem": "npm",
+    "manifest": "package.json",
+    "overallVerdict": "avoid",
+    "summary": "The dependency set is generally healthy — express, lodash, and moment are all actively maintained and recommended — though their current range floors still resolve to versions with known vulnerabilities (3 for lodash, 1 each for express and moment). The urgent problems are request and tslint, both officially deprecated and scoring zero, with request being the worst case since it is a production dependency carrying a known SSRF vulnerability that no maintainer will patch. The single most valuable next step is removing request and migrating to got, axios, or ky. After that, raise the version floors on express, lodash, and moment to patched releases, and replace tslint with ESLint.",
+    "counts": {
+      "recommended": 3,
+      "caution": 0,
+      "avoid": 2,
+      "unknown": 0
+    },
+    "assessments": [
+      {
+        "dependency": {
+          "name": "request",
+          "ecosystem": "npm",
+          "requested": "^2.88.2",
+          "kind": "prod"
+        },
+        "verdict": "avoid",
+        "score": 0,
+        "summary": "request is officially deprecated and has had no releases or commits in roughly seven years, yet it still pulls ~15.3M weekly downloads — a legacy footprint, not an active project. With a known SSRF vulnerability affecting the latest version and no maintainer to patch it, new code should not depend on it.",
+        "reasons": [
+          "The registry itself flags the package as deprecated, pointing to the maintainers' shutdown notice (issue #3142), and there have been 0 releases in the last 12 months — the last one (2.88.2) was ~2,431 days ago.",
+          "The latest version ships a moderate-severity SSRF vulnerability (GHSA-p8p7-x288-28g6), and since the project is abandoned there will be no patched release to move to.",
+          "Development is fully stalled on GitHub too: the repo (25,492 stars) has had no commits in ~2,430 days, so bugs and security reports go unaddressed.",
+          "The ~15.3M weekly downloads show the package is still widely installed, but that reflects legacy code that hasn't migrated — it doesn't indicate active maintenance, and the tension is worth acknowledging while still steering new work away.",
+          "It also ships no TypeScript type information, so modern TS projects would need @types/request anyway — another sign the package predates current ecosystem expectations."
+        ],
+        "findings": [
+          {
+            "impact": "critical",
+            "message": "Deprecated: “request has been deprecated, see https://github.com/request/request/issues/3142”",
+            "penalty": 60
+          },
+          {
+            "impact": "negative",
+            "message": "1 moderate-severity vulnerability in the latest version",
+            "penalty": 10
+          },
+          {
+            "impact": "negative",
+            "message": "The floor of your range (^2.88.2) has 1 known vulnerability — raise it to a patched version",
+            "penalty": 5
+          },
+          {
+            "impact": "negative",
+            "message": "No release in 7 years",
+            "penalty": 20
+          },
+          {
+            "impact": "negative",
+            "message": "Last commit was 7 years ago",
+            "penalty": 15
+          },
+          {
+            "impact": "positive",
+            "message": "Widely used (15,303,272 weekly downloads)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "got",
+            "reason": "Actively maintained, promise-based HTTP client that was created specifically as the modern replacement for request, with built-in retries and hooks.",
+            "url": "https://www.npmjs.com/package/got",
+            "adoption": {
+              "weeklyDownloads": 49967370,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          },
+          {
+            "name": "axios",
+            "reason": "Very widely adopted, actively maintained HTTP client with interceptors, automatic JSON handling, and first-class TypeScript types.",
+            "url": "https://www.npmjs.com/package/axios",
+            "adoption": {
+              "weeklyDownloads": 139913622,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          },
+          {
+            "name": "ky",
+            "reason": "A small, modern fetch-wrapper by the Sindre Sorhus team for projects already on Node 18+, where the built-in fetch API may make a third-party client unnecessary.",
+            "url": "https://www.npmjs.com/package/ky",
+            "adoption": {
+              "weeklyDownloads": 8594827,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          }
+        ],
+        "signals": {
+          "dependency": {
+            "name": "request",
+            "ecosystem": "npm",
+            "requested": "^2.88.2",
+            "kind": "prod"
+          },
+          "registry": {
+            "latestVersion": "2.88.2",
+            "registryUrl": "https://www.npmjs.com/package/request",
+            "description": "Simplified HTTP request client.",
+            "license": "Apache-2.0",
+            "homepage": "https://github.com/request/request#readme",
+            "repositoryUrl": "git+https://github.com/request/request.git",
+            "createdAt": "2011-01-22T00:36:12.640000Z",
+            "lastReleaseAt": "2020-02-11T16:35:36.122000Z",
+            "totalVersions": 126,
+            "releasesLastYear": 0,
+            "deprecated": "request has been deprecated, see https://github.com/request/request/issues/3142",
+            "maintainersCount": 4,
+            "dependenciesCount": 20,
+            "unpackedSizeBytes": 209281,
+            "hasTypes": false
+          },
+          "adoption": {
+            "weeklyDownloads": 15303272,
+            "totalDownloads": null,
+            "dependents": null,
+            "note": "last 7 days"
+          },
+          "repository": {
+            "fullName": "request/request",
+            "url": "https://github.com/request/request",
+            "description": "🏊🏾 Simplified HTTP request client.",
+            "stars": 25492,
+            "forks": 3141,
+            "openIssues": 144,
+            "archived": false,
+            "lastCommitAt": "2020-02-11T23:39:46Z"
+          },
+          "vulnerabilities": {
+            "totalKnown": 2,
+            "vulnerabilities": [
+              {
+                "id": "GHSA-7xfp-9c55-5vqj",
+                "summary": "Remote Memory Exposure in request",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2017-16026"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-7xfp-9c55-5vqj",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-p8p7-x288-28g6",
+                "summary": "Server-Side Request Forgery in Request",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2023-28155"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-p8p7-x288-28g6",
+                "affectsLatest": true,
+                "affectsRequested": true
+              }
+            ],
+            "requestedVersion": "2.88.2",
+            "requestedPinned": false
+          },
+          "issues": []
+        },
+        "verdictSource": "rules",
+        "verdictConfidence": null,
+        "explanationSource": "llm"
+      },
+      {
+        "dependency": {
+          "name": "tslint",
+          "ecosystem": "npm",
+          "requested": "^6.1.3",
+          "kind": "dev"
+        },
+        "verdict": "avoid",
+        "score": 0,
+        "summary": "TSLint is officially deprecated and its repository is archived, so it receives no fixes, no TypeScript-compatibility updates, and no community support despite still being downloaded ~1.9M times a week. New projects should lint TypeScript with ESLint instead.",
+        "reasons": [
+          "The npm registry marks the package deprecated: \"TSLint has been deprecated in favor of ESLint\" (palantir/tslint#4534).",
+          "The GitHub repo is archived (read-only) with no commit in ~2,023 days and only 1 open issue left, so nothing will ever be merged.",
+          "The latest release 6.1.3 is ~2,260 days old with 0 releases in the last 12 months and a single maintainer — effectively an abandoned project.",
+          "Adoption is high (1,946,146 weekly downloads, 5,898 stars), but that reflects legacy codebases mid-migration, not active maintenance; it doesn't offset the deprecation.",
+          "There are 0 known vulnerabilities, but with no releases since 2020 any future issue would never get a patch, and newer TypeScript syntax/features aren't supported by its rules."
+        ],
+        "findings": [
+          {
+            "impact": "critical",
+            "message": "Deprecated: “TSLint has been deprecated in favor of ESLint. Please see https://github.com/palantir/tslint/issues/4534 for more information.”",
+            "penalty": 60
+          },
+          {
+            "impact": "critical",
+            "message": "GitHub repository is archived (read-only)",
+            "penalty": 40
+          },
+          {
+            "impact": "positive",
+            "message": "No known vulnerabilities",
+            "penalty": 0
+          },
+          {
+            "impact": "negative",
+            "message": "No release in 6 years",
+            "penalty": 20
+          },
+          {
+            "impact": "negative",
+            "message": "Last commit was 6 years ago",
+            "penalty": 15
+          },
+          {
+            "impact": "positive",
+            "message": "Widely used (1,946,146 weekly downloads)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "eslint",
+            "reason": "The officially recommended successor — TSLint's own deprecation notice points to ESLint as the replacement.",
+            "url": "https://www.npmjs.com/package/eslint",
+            "adoption": {
+              "weeklyDownloads": 198218333,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          },
+          {
+            "name": "typescript-eslint",
+            "reason": "The unified package providing ESLint parser and plugin for TypeScript, covering TSLint's language-aware rules.",
+            "url": "https://www.npmjs.com/package/typescript-eslint",
+            "adoption": {
+              "weeklyDownloads": 112639766,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          },
+          {
+            "name": "@biomejs/biome",
+            "reason": "A fast, actively maintained all-in-one linter/formatter that supports TypeScript without a separate parser setup.",
+            "url": "https://www.npmjs.com/package/@biomejs/biome",
+            "adoption": {
+              "weeklyDownloads": 21103523,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          }
+        ],
+        "signals": {
+          "dependency": {
+            "name": "tslint",
+            "ecosystem": "npm",
+            "requested": "^6.1.3",
+            "kind": "dev"
+          },
+          "registry": {
+            "latestVersion": "6.1.3",
+            "registryUrl": "https://www.npmjs.com/package/tslint",
+            "description": "An extensible static analysis linter for the TypeScript language",
+            "license": "Apache-2.0",
+            "homepage": "https://palantir.github.io/tslint",
+            "repositoryUrl": "https://github.com/palantir/tslint.git",
+            "createdAt": "2013-07-28T02:08:41.652000Z",
+            "lastReleaseAt": "2020-07-31T17:25:07.479000Z",
+            "totalVersions": 182,
+            "releasesLastYear": 0,
+            "deprecated": "TSLint has been deprecated in favor of ESLint. Please see https://github.com/palantir/tslint/issues/4534 for more information.",
+            "maintainersCount": 1,
+            "dependenciesCount": 13,
+            "unpackedSizeBytes": 1894316,
+            "hasTypes": true
+          },
+          "adoption": {
+            "weeklyDownloads": 1946146,
+            "totalDownloads": null,
+            "dependents": null,
+            "note": "last 7 days"
+          },
+          "repository": {
+            "fullName": "palantir/tslint",
+            "url": "https://github.com/palantir/tslint",
+            "description": ":vertical_traffic_light: An extensible linter for the TypeScript language",
+            "stars": 5898,
+            "forks": 871,
+            "openIssues": 1,
+            "archived": true,
+            "lastCommitAt": "2021-03-25T15:41:38Z"
+          },
+          "vulnerabilities": {
+            "totalKnown": 0,
+            "vulnerabilities": [],
+            "requestedVersion": "6.1.3",
+            "requestedPinned": false
+          },
+          "issues": []
+        },
+        "verdictSource": "rules",
+        "verdictConfidence": null,
+        "explanationSource": "llm"
+      },
+      {
+        "dependency": {
+          "name": "express",
+          "ecosystem": "npm",
+          "requested": "^4.19.2",
+          "kind": "prod"
+        },
+        "verdict": "recommended",
+        "score": 95,
+        "summary": "Express remains the safest default for Node.js web servers: it's enormously adopted (169.5M weekly downloads, ~69.6k stars), actively maintained (commit 2 days ago, 5.2.1 released 24 days ago), and the latest version is clear of all 5 historical advisories. Just bump the floor of your ^4.19.2 range to a patched 4.x release, since that exact floor carries 1 known vulnerability.",
+        "reasons": [
+          "Adoption and maturity are exceptional: 169,483,150 weekly downloads, 69,593 stars, 25,174 forks, 289 releases over ~15.8 years, MIT licensed, not deprecated or archived.",
+          "Maintenance is healthy: last commit 2 days ago, latest release 5.2.1 shipped 24 days ago, 6 releases in the last 12 months, and 5 maintainers.",
+          "Security posture is good at the top end: none of the 5 known advisories affect the latest version; the single advisory touching ^4.19.2 is resolved by raising the floor within your existing range.",
+          "Practical footprint is light: 73 KB unpacked with 28 direct dependencies, and the huge ecosystem means answers and middleware exist for nearly everything.",
+          "Two caveats to plan around: it ships no bundled type information (add @types/express for TypeScript), and Express 5 is now the latest line, so a 4.x pin is legacy-adjacent even though 4.x remains fully supported."
+        ],
+        "findings": [
+          {
+            "impact": "positive",
+            "message": "Latest version is clear of the 5 historical advisories",
+            "penalty": 0
+          },
+          {
+            "impact": "negative",
+            "message": "The floor of your range (^4.19.2) has 1 known vulnerability — raise it to a patched version",
+            "penalty": 5
+          },
+          {
+            "impact": "positive",
+            "message": "6 releases in the last 12 months",
+            "penalty": 0
+          },
+          {
+            "impact": "positive",
+            "message": "Actively developed (commit in the last 30 days)",
+            "penalty": 0
+          },
+          {
+            "impact": "positive",
+            "message": "Widely used (169,483,150 weekly downloads)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [],
+        "signals": {
+          "dependency": {
+            "name": "express",
+            "ecosystem": "npm",
+            "requested": "^4.19.2",
+            "kind": "prod"
+          },
+          "registry": {
+            "latestVersion": "5.2.1",
+            "registryUrl": "https://www.npmjs.com/package/express",
+            "description": "Fast, unopinionated, minimalist web framework",
+            "license": "MIT",
+            "homepage": "https://expressjs.com/",
+            "repositoryUrl": "git+https://github.com/expressjs/express.git",
+            "createdAt": "2010-12-29T19:38:25.450000Z",
+            "lastReleaseAt": "2026-09-14T06:46:38.631000Z",
+            "totalVersions": 289,
+            "releasesLastYear": 6,
+            "deprecated": null,
+            "maintainersCount": 5,
+            "dependenciesCount": 28,
+            "unpackedSizeBytes": 75429,
+            "hasTypes": false
+          },
+          "adoption": {
+            "weeklyDownloads": 169483150,
+            "totalDownloads": null,
+            "dependents": null,
+            "note": "last 7 days"
+          },
+          "repository": {
+            "fullName": "expressjs/express",
+            "url": "https://github.com/expressjs/express",
+            "description": "Fast, unopinionated, minimalist web framework for node.",
+            "stars": 69593,
+            "forks": 25174,
+            "openIssues": 238,
+            "archived": false,
+            "lastCommitAt": "2026-10-06T21:19:38Z"
+          },
+          "vulnerabilities": {
+            "totalKnown": 5,
+            "vulnerabilities": [
+              {
+                "id": "GHSA-cm5g-3pgc-8rg4",
+                "summary": "Express ressource injection",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2024-10491"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-cm5g-3pgc-8rg4",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-gpvr-g6gh-9mc2",
+                "summary": "No Charset in Content-Type Header in express",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2014-6393"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-gpvr-g6gh-9mc2",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-jj78-5fmv-mv28",
+                "summary": "Express Open Redirect vulnerability",
+                "severity": "low",
+                "aliases": [
+                  "CVE-2024-9266"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-jj78-5fmv-mv28",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-qw6h-vgh9-j6wx",
+                "summary": "express vulnerable to XSS via response.redirect()",
+                "severity": "low",
+                "aliases": [
+                  "CVE-2024-43796"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-qw6h-vgh9-j6wx",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-rv95-896h-c2vc",
+                "summary": "Express.js Open Redirect in malformed URLs",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2024-29041"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-rv95-896h-c2vc",
+                "affectsLatest": false,
+                "affectsRequested": false
+              }
+            ],
+            "requestedVersion": "4.19.2",
+            "requestedPinned": false
+          },
+          "issues": []
+        },
+        "verdictSource": "jev",
+        "verdictConfidence": 0.98,
+        "explanationSource": "llm"
+      },
+      {
+        "dependency": {
+          "name": "lodash",
+          "ecosystem": "npm",
+          "requested": "^4.17.21",
+          "kind": "prod"
+        },
+        "verdict": "recommended",
+        "score": 95,
+        "summary": "Lodash remains a safe default: it is one of the most downloaded packages on npm (203M weekly downloads), its latest release 4.18.1 is clear of all 10 historical advisories, and the repo shows a commit within the last 27 days. The only real action item is raising your range floor, since ^4.17.21 still resolves to a version with 3 known vulnerabilities.",
+        "reasons": [
+          "Enormous, battle-tested adoption: 203,122,461 weekly downloads, 61,349 GitHub stars and 7,192 forks across a 14-year-old package (5,281 days).",
+          "Security posture is clean at the top: none of the 10 historical advisories affect the latest 4.17.x/4.18.x line, though 3 do affect your requested floor ^4.17.21 — bump the range to pick up the patched 4.18.1.",
+          "Actively developed despite a 190-day release gap: last commit was 27 days ago, with 3 releases in the past 12 months and the repo not archived.",
+          "Two minor caveats worth knowing: it is maintained by a single person (bus-factor risk, mitigated by the huge ecosystem depending on it), and it ships no TypeScript types, so you'll want @types/lodash alongside it.",
+          "Zero runtime dependencies and a permissive MIT license keep the supply-chain surface small for something this widely deployed."
+        ],
+        "findings": [
+          {
+            "impact": "positive",
+            "message": "Latest version is clear of the 10 historical advisories",
+            "penalty": 0
+          },
+          {
+            "impact": "negative",
+            "message": "The floor of your range (^4.17.21) has 3 known vulnerabilities — raise it to a patched version",
+            "penalty": 5
+          },
+          {
+            "impact": "positive",
+            "message": "3 releases in the last 12 months",
+            "penalty": 0
+          },
+          {
+            "impact": "positive",
+            "message": "Actively developed (commit in the last 30 days)",
+            "penalty": 0
+          },
+          {
+            "impact": "positive",
+            "message": "Widely used (203,122,461 weekly downloads)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [],
+        "signals": {
+          "dependency": {
+            "name": "lodash",
+            "ecosystem": "npm",
+            "requested": "^4.17.21",
+            "kind": "prod"
+          },
+          "registry": {
+            "latestVersion": "4.18.1",
+            "registryUrl": "https://www.npmjs.com/package/lodash",
+            "description": "Lodash modular utilities.",
+            "license": "MIT",
+            "homepage": "https://lodash.com/",
+            "repositoryUrl": "git+https://github.com/lodash/lodash.git",
+            "createdAt": "2012-04-23T16:37:11.912000Z",
+            "lastReleaseAt": "2026-04-01T21:01:20.458000Z",
+            "totalVersions": 117,
+            "releasesLastYear": 3,
+            "deprecated": null,
+            "maintainersCount": 1,
+            "dependenciesCount": 0,
+            "unpackedSizeBytes": 1413741,
+            "hasTypes": false
+          },
+          "adoption": {
+            "weeklyDownloads": 203122461,
+            "totalDownloads": null,
+            "dependents": null,
+            "note": "last 7 days"
+          },
+          "repository": {
+            "fullName": "lodash/lodash",
+            "url": "https://github.com/lodash/lodash",
+            "description": "A modern JavaScript utility library delivering modularity, performance, & extras.",
+            "stars": 61349,
+            "forks": 7192,
+            "openIssues": 121,
+            "archived": false,
+            "lastCommitAt": "2026-09-11T18:02:53Z"
+          },
+          "vulnerabilities": {
+            "totalKnown": 10,
+            "vulnerabilities": [
+              {
+                "id": "GHSA-29mw-wpgm-hmr9",
+                "summary": "Regular Expression Denial of Service (ReDoS) in lodash",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2020-28500"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-29mw-wpgm-hmr9",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-35jh-r3h4-6jhm",
+                "summary": "Command Injection in lodash",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2021-23337",
+                  "CVE-2026-4800",
+                  "GHSA-r5fr-rjxr-66jc"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-35jh-r3h4-6jhm",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-4xc9-xhrj-v574",
+                "summary": "Prototype Pollution in lodash",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2018-16487"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-4xc9-xhrj-v574",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-f23m-r3pf-42rh",
+                "summary": "lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2025-13465",
+                  "CVE-2026-2950",
+                  "GHSA-xxjr-mmjv-4gpg"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-f23m-r3pf-42rh",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-fvqr-27wr-82fm",
+                "summary": "Prototype Pollution in lodash",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2018-3721"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-fvqr-27wr-82fm",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-jf85-cpcp-j695",
+                "summary": "Prototype Pollution in lodash",
+                "severity": "critical",
+                "aliases": [
+                  "CVE-2019-10744",
+                  "SNYK-JS-LODASH-450202"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-jf85-cpcp-j695",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-p6mc-m468-83gw",
+                "summary": "Prototype Pollution in lodash",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2020-8203"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-p6mc-m468-83gw",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-r5fr-rjxr-66jc",
+                "summary": "lodash vulnerable to Code Injection via `_.template` imports key names",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2021-23337",
+                  "CVE-2026-4800",
+                  "GHSA-35jh-r3h4-6jhm"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-r5fr-rjxr-66jc",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-x5rq-j2xg-h7qm",
+                "summary": "Regular Expression Denial of Service (ReDoS) in lodash",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2019-1010266",
+                  "SNYK-JS-LODASH-73639"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-x5rq-j2xg-h7qm",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-xxjr-mmjv-4gpg",
+                "summary": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2025-13465",
+                  "CVE-2026-2950",
+                  "GHSA-f23m-r3pf-42rh"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-xxjr-mmjv-4gpg",
+                "affectsLatest": false,
+                "affectsRequested": true
+              }
+            ],
+            "requestedVersion": "4.17.21",
+            "requestedPinned": false
+          },
+          "issues": []
+        },
+        "verdictSource": "jev",
+        "verdictConfidence": 0.95,
+        "explanationSource": "llm"
+      },
+      {
+        "dependency": {
+          "name": "moment",
+          "ecosystem": "npm",
+          "requested": "^2.29.4",
+          "kind": "prod"
+        },
+        "verdict": "recommended",
+        "score": 95,
+        "summary": "Moment is a safe, battle-tested pick: 43.3M weekly downloads, a commit pushed today, and a latest release (2.31.0) that clears all five historical advisories. Just raise your range floor above ^2.29.4 — that version still carries one known vulnerability — and keep in mind the project is in maintenance mode, so brand-new code may prefer a modern alternative.",
+        "reasons": [
+          "Enormous adoption — 43,259,816 weekly downloads, 47,902 stars and 6,976 forks — means edge cases are well known and thoroughly documented.",
+          "Actively maintained despite its age: last commit 0 days ago, repo not archived, 6 maintainers, and 2.31.0 shipped just 23 days ago.",
+          "Security is clean at the top: none of the 5 known advisories affect 2.31.0, but 1 affects the ^2.29.4 floor, so bump the range to pull the patched release.",
+          "Only 1 release in the last 12 months reflects the project's own maintenance-mode stance — stable and patched but feature-frozen; the moment team itself directs new projects to Luxon or Temporal.",
+          "Zero runtime dependencies, MIT license, and shipped TypeScript types keep integration friction low."
+        ],
+        "findings": [
+          {
+            "impact": "positive",
+            "message": "Latest version is clear of the 5 historical advisories",
+            "penalty": 0
+          },
+          {
+            "impact": "negative",
+            "message": "The floor of your range (^2.29.4) has 1 known vulnerability — raise it to a patched version",
+            "penalty": 5
+          },
+          {
+            "impact": "positive",
+            "message": "Actively developed (commit in the last 30 days)",
+            "penalty": 0
+          },
+          {
+            "impact": "positive",
+            "message": "Widely used (43,259,816 weekly downloads)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "dayjs",
+            "reason": "2 KB, immutable, and API-compatible with moment, so migration is nearly drop-in while bundle size drops sharply.",
+            "url": "https://www.npmjs.com/package/dayjs",
+            "adoption": {
+              "weeklyDownloads": 89326297,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          },
+          {
+            "name": "date-fns",
+            "reason": "Functional, tree-shakeable, and immutable — you only ship the date functions you actually import.",
+            "url": "https://www.npmjs.com/package/date-fns",
+            "adoption": {
+              "weeklyDownloads": 122470257,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          },
+          {
+            "name": "luxon",
+            "reason": "The successor built and endorsed by the moment team itself, with a modern Intl-based API.",
+            "url": "https://www.npmjs.com/package/luxon",
+            "adoption": {
+              "weeklyDownloads": 50049079,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          }
+        ],
+        "signals": {
+          "dependency": {
+            "name": "moment",
+            "ecosystem": "npm",
+            "requested": "^2.29.4",
+            "kind": "prod"
+          },
+          "registry": {
+            "latestVersion": "2.31.0",
+            "registryUrl": "https://www.npmjs.com/package/moment",
+            "description": "Parse, validate, manipulate, and display dates",
+            "license": "MIT",
+            "homepage": "https://momentjs.com",
+            "repositoryUrl": "github:moment/moment",
+            "createdAt": "2011-10-17T20:04:22.876000Z",
+            "lastReleaseAt": "2026-09-15T01:07:26.131000Z",
+            "totalVersions": 77,
+            "releasesLastYear": 1,
+            "deprecated": null,
+            "maintainersCount": 6,
+            "dependenciesCount": 0,
+            "unpackedSizeBytes": 4497001,
+            "hasTypes": true
+          },
+          "adoption": {
+            "weeklyDownloads": 43259816,
+            "totalDownloads": null,
+            "dependents": null,
+            "note": "last 7 days"
+          },
+          "repository": {
+            "fullName": "moment/moment",
+            "url": "https://github.com/moment/moment",
+            "description": "Parse, validate, manipulate, and display dates in javascript.",
+            "stars": 47902,
+            "forks": 6976,
+            "openIssues": 59,
+            "archived": false,
+            "lastCommitAt": "2026-10-08T16:26:53Z"
+          },
+          "vulnerabilities": {
+            "totalKnown": 5,
+            "vulnerabilities": [
+              {
+                "id": "GHSA-446m-mv8f-q348",
+                "summary": "Regular Expression Denial of Service in moment",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2017-18214"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-446m-mv8f-q348",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-4p3w-j4w9-5jqw",
+                "summary": "moment vulnerable to Path Traversal via crafted non-string locale name",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2026-17495"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-4p3w-j4w9-5jqw",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-87vv-r9j6-g5qv",
+                "summary": "Regular Expression Denial of Service in moment",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2016-4055"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-87vv-r9j6-g5qv",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-8hfj-j24r-96c4",
+                "summary": "Path Traversal: 'dir/../../filename' in moment.locale",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2022-24785"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-8hfj-j24r-96c4",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-wc69-rhjr-hc9g",
+                "summary": "Moment.js vulnerable to Inefficient Regular Expression Complexity",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2022-31129"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-wc69-rhjr-hc9g",
+                "affectsLatest": false,
+                "affectsRequested": false
+              }
+            ],
+            "requestedVersion": "2.29.4",
+            "requestedPinned": false
+          },
+          "issues": []
+        },
+        "verdictSource": "jev",
+        "verdictConfidence": 0.58,
+        "explanationSource": "llm"
+      }
+    ],
+    "skipped": [],
+    "generatedAt": "2026-10-08T21:46:41.653925Z"
+  }
+}
