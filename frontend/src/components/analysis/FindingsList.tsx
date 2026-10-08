@@ -1,15 +1,10 @@
-import { ChevronDown, CircleAlert, CircleCheck, OctagonAlert } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { useState } from "react"
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
+import { IMPACT_ICON } from "@/lib/verdict"
 import type { Finding, SourceIssue } from "@/types/analysis"
-
-const IMPACT_ICON = {
-  positive: { icon: CircleCheck, className: "text-success" },
-  negative: { icon: CircleAlert, className: "text-warning-foreground" },
-  critical: { icon: OctagonAlert, className: "text-destructive" },
-} as const
 
 interface FindingsListProps {
   findings: Finding[]

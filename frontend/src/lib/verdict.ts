@@ -1,6 +1,14 @@
-import { CircleCheck, CircleHelp, OctagonX, TriangleAlert, type LucideIcon } from "lucide-react"
+import {
+  CircleAlert,
+  CircleCheck,
+  CircleHelp,
+  OctagonAlert,
+  OctagonX,
+  TriangleAlert,
+  type LucideIcon,
+} from "lucide-react"
 
-import type { Severity, Verdict } from "@/types/analysis"
+import type { Finding, Severity, Verdict } from "@/types/analysis"
 
 export interface VerdictMeta {
   label: string
@@ -58,4 +66,10 @@ export const SEVERITY_CLASS: Record<Severity, string> = {
   moderate: "bg-warning/20 text-warning-foreground",
   low: "bg-muted text-muted-foreground",
   unknown: "bg-muted text-muted-foreground",
+}
+
+export const IMPACT_ICON: Record<Finding["impact"], { icon: LucideIcon; className: string }> = {
+  positive: { icon: CircleCheck, className: "text-success" },
+  negative: { icon: CircleAlert, className: "text-warning-foreground" },
+  critical: { icon: OctagonAlert, className: "text-destructive" },
 }
