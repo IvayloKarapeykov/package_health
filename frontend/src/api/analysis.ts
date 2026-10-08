@@ -1,4 +1,5 @@
 import { readServerSentEvents, StreamIdleError } from "@/api/sse"
+import { keyHeaders } from "@/lib/keys"
 import type { AnalysisEvent, AnalysisRequest, FailureKind } from "@/types/analysis"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ""
@@ -31,7 +32,7 @@ export async function* streamAnalysis(
   try {
     response = await fetch(`${API_BASE_URL}/api/analyze/stream`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+      headers: { "Content-Type": "application/json", Accept: "text/event-stream", ...keyHeaders() },
       body: JSON.stringify(request),
       signal,
     })

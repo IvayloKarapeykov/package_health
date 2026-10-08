@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react"
+import { useSearchParams } from "react-router"
 
 import { AnalyzeForm } from "@/components/analysis/AnalyzeForm"
 import { ErrorState } from "@/components/analysis/ErrorState"
+import { KeysDialog } from "@/components/analysis/KeysDialog"
 import { RecentSearches } from "@/components/analysis/RecentSearches"
 import { ResultsView } from "@/components/analysis/ResultsView"
 import { SearchPill } from "@/components/analysis/SearchPill"
@@ -27,6 +29,17 @@ export default function AnalyzerPage() {
   const history = useSearchHistory()
   const [lastRequest, setLastRequest] = useState<AnalysisRequest | null>(null)
   const [searchOpen, setSearchOpen] = useState(true)
+  // /app?keys opens the keys dialog straight away (the landing page links there).
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [keysOpen, setKeysOpen] = useState(searchParams.has("keys"))
+
+  const handleKeysOpenChange = useCallback(
+    (open: boolean) => {
+      setKeysOpen(open)
+      if (!open && searchParams.has("keys")) setSearchParams({}, { replace: true })
+    },
+    [searchParams, setSearchParams],
+  )
 
   const running = state.status === "running"
   const active = state.status !== "idle"
@@ -106,7 +119,8 @@ export default function AnalyzerPage() {
               active ? "mt-0 max-w-4xl" : "mt-10 max-w-2xl",
             )}
           >
-            <div className="glass p-4 sm:p-5" style={{ borderRadius: SEARCH_RADIUS_PX }}>
+            <div className="glass relative p-4 sm:p-5" style={{ borderRadius: SEARCH_RADIUS_PX }}>
+              <KeysDialog open={keysOpen} onOpenChange={handleKeysOpenChange} className="absolute top-4 right-4 sm:top-5 sm:right-5" />
               <AnalyzeForm running={running} onSubmit={handleAnalyze} />
             </div>
           </WaveBorder>

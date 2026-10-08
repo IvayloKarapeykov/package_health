@@ -1,4 +1,5 @@
-import { ArrowUpRight } from "lucide-react"
+import { ArrowRight, ArrowUpRight } from "lucide-react"
+import { Link } from "react-router"
 
 import { SectionHeading } from "@/components/landing/SectionHeading"
 
@@ -48,6 +49,12 @@ export function KeysSection() {
           </li>
         ))}
       </ol>
+      <p className="mt-6 text-center text-sm">
+        <Link to="/app?keys" className="inline-flex items-center gap-1 font-medium text-brand-blue hover:underline">
+          Add your keys in the analyzer
+          <ArrowRight className="size-3.5" aria-hidden />
+        </Link>
+      </p>
     </section>
   )
 }
