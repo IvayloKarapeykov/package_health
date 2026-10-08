@@ -62,7 +62,6 @@ const SECTIONS: { title: string; pages: Omit<DocPage, "section" | "Content">[] }
     pages: [
       { slug: "self-host-run", title: "Run it yourself", description: "Run the backend and frontend on your own machine." },
       { slug: "self-host-config", title: "Configuration", description: "Every setting, with its default." },
-      { slug: "self-host-deploy", title: "Deploy", description: "Put your own copy online, on Railway and Vercel or anywhere else." },
     ],
   },
   {
