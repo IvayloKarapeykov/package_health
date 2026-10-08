@@ -1,0 +1,53 @@
+Every package goes through the same five steps. If one fails, for example because GitHub is rate
+limited, the report says so and the other steps carry on.
+
+| Step | What happens |
+| --- | --- |
+| Collect | The registry, GitHub and OSV.dev are queried in parallel |
+| Score | Fixed rules turn the facts into a score out of 100 |
+| Decide | Jev, a decision model, picks the verdict |
+| Explain | An LLM writes the reasons, using only the collected facts |
+| Verify | Suggested alternatives are checked against the registry |
+
+## The health score
+
+The score starts at 100. Each problem the rules find takes points away; positive findings are
+listed but don't add any.
+
+| Finding | Points |
+| --- | --- |
+| Deprecated | −60 |
+| GitHub repository archived | −40 |
+| Critical vulnerability in the latest version | −40 |
+| High-severity vulnerability in the latest version | −25 each, up to −40 |
+| Moderate-severity vulnerability in the latest version | −10 each, up to −40 |
+| No release in 2 years / in over a year | −20 / −10 |
+| No commit in 2 years / in over a year | −15 / −8 |
+| Very low / modest adoption | −15 / −5 |
+| No source repository or no license | −10 each |
+| Your pinned version has known vulnerabilities | −5 |
+
+## From score to verdict
+
+| Verdict | When the rules decide |
+| --- | --- |
+| Recommended | Score of 75 or more |
+| Caution | Score from 50 to 74 |
+| Avoid | Score below 50 |
+
+Three findings always mean **avoid**, whatever the score: the package is deprecated, its repository
+is archived, or its latest version has a critical vulnerability.
+
+## Where AI comes in
+
+With an OpenRouter key, **Jev** makes the final call instead of the score thresholds. It sees the
+facts in plain language ("last release 3 years ago") but not the rule-based verdict, so its decision
+is independent. Each verdict shows how confident it was.
+
+An **LLM** then writes the summary and reasons, and suggests alternatives. It only works from the
+collected facts, and every alternative it suggests is looked up in the registry before it's shown.
+
+<Note>
+  Without an OpenRouter key, or if a model call fails, the rule-based verdict and template reasons
+  are used. The report shows which one decided each verdict.
+</Note>

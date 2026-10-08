@@ -4,7 +4,7 @@ import type { Extension } from "@codemirror/state"
 
 import type { Syntax } from "@/lib/manifestFormat"
 
-export type CodeLanguage = Syntax | "shell"
+export type CodeLanguage = Syntax | "shell" | "javascript" | "python"
 
 const LOADERS: Record<CodeLanguage, () => Promise<Extension>> = {
   json: () => import("@codemirror/lang-json").then((m) => m.json()),
@@ -17,6 +17,8 @@ const LOADERS: Record<CodeLanguage, () => Promise<Extension>> = {
   gomod: async () => StreamLanguage.define(goMod),
   requirements: async () => StreamLanguage.define(requirements),
   shell: () => import("@codemirror/legacy-modes/mode/shell").then((m) => StreamLanguage.define(m.shell)),
+  javascript: () => import("@codemirror/legacy-modes/mode/javascript").then((m) => StreamLanguage.define(m.typescript)),
+  python: () => import("@codemirror/legacy-modes/mode/python").then((m) => StreamLanguage.define(m.python)),
 }
 
 const loaded = new Map<CodeLanguage, Promise<Extension>>()
