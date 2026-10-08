@@ -57,6 +57,20 @@ const SECTIONS: { title: string; pages: Omit<DocPage, "section" | "Content">[] }
       { slug: "api-stream", title: "Streaming", description: "Follow an analysis as it runs, with Server-Sent Events." },
     ],
   },
+  {
+    title: "Self-hosting",
+    pages: [
+      { slug: "self-host-run", title: "Run it yourself", description: "Run the backend and frontend on your own machine." },
+      { slug: "self-host-config", title: "Configuration", description: "Every setting, with its default." },
+      { slug: "self-host-deploy", title: "Deploy", description: "Put your own copy online, on Railway and Vercel or anywhere else." },
+    ],
+  },
+  {
+    title: "Contributing",
+    pages: [
+      { slug: "add-an-ecosystem", title: "Add an ecosystem", description: "Support a new package registry in four steps." },
+    ],
+  },
 ]
 
 export const DOC_SECTIONS = SECTIONS.map((section) => ({

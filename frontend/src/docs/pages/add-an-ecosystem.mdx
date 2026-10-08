@@ -1,0 +1,41 @@
+Each ecosystem is an adapter plus a parser for each of its dependency files. The scoring, the agent,
+the MCP tools and the web app need no changes.
+
+<Steps>
+
+### Write the adapter
+
+Add a class in `backend/app/ecosystems/`. Subclass `EcosystemAdapter`, or `DepsDevAdapter` if
+[deps.dev](https://deps.dev) covers the ecosystem, which gives you versions, licenses and links for
+free.
+
+| It provides | For example |
+| --- | --- |
+| `id` and `osv_ecosystem` | `"cargo"` and `"crates.io"` |
+| `name_pattern` | Which names are valid, used by auto-detection |
+| `get_package` | Registry metadata and release history |
+| `get_adoption` | Downloads or dependent packages |
+| `package_url` | The package's page on the registry |
+
+### Parse its dependency files
+
+Add a `ManifestParser` in `backend/app/manifests/` for each file format, and list it in
+`manifests/registry.py`. Parsers only extract names, versions and whether each is a dev dependency.
+Validation and limits happen afterwards, in one place.
+
+### Register it
+
+Add the adapter in `backend/app/container.py`, then the ecosystem's display name in
+`backend/app/domain/ecosystems.py` and `frontend/src/lib/ecosystems.ts`.
+
+### Test it
+
+Add parsing tests next to the existing ones in `backend/tests/test_ecosystems.py` and
+`backend/tests/test_manifests.py`, then run `pytest`.
+
+</Steps>
+
+## Open a pull request
+
+Fork the repo, branch from `dev`, and open your pull request against `dev`. Small, focused pull
+requests are easiest to review.

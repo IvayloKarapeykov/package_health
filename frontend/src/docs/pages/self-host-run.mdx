@@ -1,0 +1,57 @@
+Everything runs on your own machine with two commands, one for the backend and one for the
+frontend. You need Python 3.12+ and Node.js 20.19+ or 22.12+.
+
+## Backend
+
+```bash
+git clone https://github.com/IvayloKarapeykov/package_health.git
+cd package_health/backend
+python3 -m venv .venv
+.venv/bin/pip install -r requirements-dev.txt
+cp .env.example .env
+.venv/bin/uvicorn app.main:app --reload --port 8000
+```
+
+The API is now on `http://localhost:8000`, with interactive docs at `/docs` and the MCP endpoint at
+`/mcp`. Keys in `.env` are optional. See [Configuration](/docs/self-host-config).
+
+## Frontend
+
+```bash
+cd package_health/frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`. In development, requests to `/api` are forwarded to the backend on
+port 8000.
+
+## Tests and checks
+
+```bash
+cd backend
+.venv/bin/python -m pytest
+.venv/bin/ruff check app tests
+cd .. && npx pyright
+```
+
+```bash
+cd frontend
+npm run lint
+npm run build
+```
+
+## Watch the agent work
+
+The analysis is a LangGraph agent. LangGraph Studio shows each step as it runs:
+
+```bash
+cd backend
+.venv/bin/langgraph dev
+```
+
+Studio opens in your browser. Pick the `package_health` graph and send it input like:
+
+```json title="input"
+{ "request": { "mode": "package", "ecosystem": "auto", "package": "requests" } }
+```
