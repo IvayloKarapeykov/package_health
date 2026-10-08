@@ -3,11 +3,12 @@
 from collections.abc import AsyncIterator
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request
 from sse_starlette import EventSourceResponse, ServerSentEvent
 
 from app.agent.runner import AnalysisRunner
 from app.core.config import Settings, get_settings
+from app.domain.credentials import Credentials
 from app.domain.ecosystems import ECOSYSTEMS
 from app.domain.errors import InvalidInputError
 from app.domain.models import AnalysisReport
@@ -20,8 +21,25 @@ router = APIRouter(prefix="/api")
 SSE_PING_SECONDS = 5
 
 
-def get_runner(request: Request) -> AnalysisRunner:
-    return request.app.state.runner
+# Callers bring their own keys: GitHub for its rate limit, OpenRouter for AI verdicts and explanations.
+# Used for that request only, never stored or logged. Without them the server's own keys apply, if it has any.
+GITHUB_TOKEN_HEADER = "X-GitHub-Token"
+OPENROUTER_KEY_HEADER = "X-OpenRouter-Key"
+
+
+def get_credentials(
+    github_token: Annotated[
+        str | None, Header(alias=GITHUB_TOKEN_HEADER, description="GitHub token: 5,000 requests/hour instead of 60")
+    ] = None,
+    openrouter_key: Annotated[
+        str | None, Header(alias=OPENROUTER_KEY_HEADER, description="OpenRouter key: AI verdicts and explanations")
+    ] = None,
+) -> Credentials:
+    return Credentials.from_raw(github_token, openrouter_key)
+
+
+def get_runner(request: Request, credentials: Annotated[Credentials, Depends(get_credentials)]) -> AnalysisRunner:
+    return request.app.state.runners(credentials)
 
 
 Runner = Annotated[AnalysisRunner, Depends(get_runner)]
@@ -30,6 +48,7 @@ RequestBody = Annotated[AnalysisRequest, Body()]
 
 @router.get("/health")
 async def health(settings: Annotated[Settings, Depends(get_settings)]) -> dict[str, object]:
+    """The server's own keys, used when a request brings none."""
     return {
         "status": "ok",
         "llm": settings.llm_model if settings.openrouter_api_key else None,

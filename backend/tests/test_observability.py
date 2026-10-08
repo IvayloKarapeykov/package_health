@@ -20,7 +20,8 @@ from tests.factories import healthy_signals
 def client(make_runner):
     app = create_app()
     with TestClient(app) as test_client:
-        app.state.runner, _ = make_runner()
+        runner, _ = make_runner()
+        app.state.runners = lambda _credentials: runner
         yield test_client
 
 

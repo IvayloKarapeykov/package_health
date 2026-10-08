@@ -1,8 +1,11 @@
 from collections.abc import Iterator
+from typing import cast
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from app.domain.credentials import Credentials
 from app.main import create_app
 
 
@@ -10,7 +13,8 @@ from app.main import create_app
 def client(make_runner) -> Iterator[TestClient]:
     app = create_app()
     with TestClient(app) as test_client:
-        app.state.runner, _ = make_runner()  # swap real upstreams for fakes
+        runner, _ = make_runner()  # swap real upstreams for fakes
+        app.state.runners = lambda _credentials: runner
         yield test_client
 
 
@@ -43,3 +47,19 @@ def test_ecosystems_lists_every_ecosystem_with_its_manifests(client: TestClient)
     assert len(ecosystems) == 8
     assert ecosystems["pypi"] == ["pyproject.toml", "Pipfile", "requirements.txt"]
     assert ecosystems["maven"] == ["pom.xml", "build.gradle"]
+
+
+def test_keys_in_headers_reach_the_runner_factory(client: TestClient) -> None:
+    app = cast(FastAPI, client.app)
+    keyless_runner = app.state.runners(Credentials())
+    received: list[Credentials] = []
+    app.state.runners = lambda credentials: received.append(credentials) or keyless_runner
+
+    payload = {"mode": "package", "ecosystem": "npm", "package": "healthy-lib"}
+    client.post("/api/analyze", json=payload, headers={"X-GitHub-Token": "gh-123", "X-OpenRouter-Key": "  "})
+    client.post("/api/analyze", json=payload)
+
+    with_keys, without_keys = received
+    assert with_keys.github_token is not None and with_keys.github_token.get_secret_value() == "gh-123"
+    assert with_keys.openrouter_api_key is None  # blank counts as absent
+    assert without_keys.empty

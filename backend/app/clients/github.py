@@ -56,7 +56,7 @@ class GitHubClient:
             if exc.rate_limited:
                 raise UpstreamError(
                     "github",
-                    "rate limit reached (60 requests/hour without a token; set GITHUB_TOKEN)",
+                    "rate limit reached (60 requests/hour without a token; send X-GitHub-Token or set GITHUB_TOKEN)",
                     status_code=exc.status_code,
                     rate_limited=True,
                 ) from exc

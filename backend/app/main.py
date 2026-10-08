@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.middleware import REQUEST_ID_HEADER, RequestContextMiddleware
 from app.api.routes import router
-from app.container import build_runner
+from app.container import RunnerFactory
 from app.core.config import get_settings
 from app.core.http import create_http_client
 from app.core.logs import configure_logging
@@ -19,7 +19,7 @@ from app.core.tracing import configure_tracing
 async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     settings = get_settings()
     async with create_http_client(settings.http_timeout_seconds) as http:
-        app.state.runner = build_runner(settings, http)
+        app.state.runners = RunnerFactory(settings, http)
         yield
 
 

@@ -213,12 +213,12 @@ npm run dev                 # http://localhost:5173 (proxies /api to :8000)
 
 | Variable | Default | Notes |
 | --- | --- | --- |
-| `OPENROUTER_API_KEY` | – | If unset, verdicts are rule-based only |
+| `OPENROUTER_API_KEY` | – | Fallback for requests without `X-OpenRouter-Key`. If neither is set, verdicts are rule-based only |
 | `LLM_MODEL` | `z-ai/glm-5.3-flash` | Any OpenRouter model id |
 | `LLM_STRUCTURED_OUTPUT_METHOD` | `function_calling` | `json_schema` / `json_mode` for models without tool calling |
 | `USE_JEV_VERDICTS` | `true` | Set to `false` to use the rule-based verdict instead of Jev |
 | `JEV_MODEL` | `typesafe/jev-1.13` | Or `~typesafe/jev-latest` to track the newest version |
-| `GITHUB_TOKEN` | – | Raises GitHub's limit from 60 to 5,000 requests/hour. Each package uses 2 requests. |
+| `GITHUB_TOKEN` | – | Fallback for requests without `X-GitHub-Token`. Raises GitHub's limit from 60 to 5,000 requests/hour. Each package uses 2 requests. |
 | `MAX_PACKAGES` | `40` | Cap on dependencies per file |
 | `MAX_CONCURRENCY` | `8` | Parallel package subgraphs |
 | `LOG_LEVEL` / `LOG_FORMAT` | `INFO` / `text` | `json` for log aggregators |
@@ -235,6 +235,27 @@ The request body is either `{"mode": "package", "ecosystem": "auto", "package": 
 specific ecosystem id instead of `auto`, which is the default) or
 `{"mode": "manifest", "content": "…", "filename": "pom.xml", "includeDev": true}`. `filename` is
 optional.
+
+### Bring your own keys
+
+Analyses can run on the caller's own keys, sent as request headers:
+
+| Header | Effect |
+| --- | --- |
+| `X-GitHub-Token` | GitHub's limit becomes the caller's own 5,000 requests/hour. A fine-grained token with public read-only access is enough. |
+| `X-OpenRouter-Key` | Verdicts from Jev and explanations from the LLM, billed to the caller's OpenRouter credits |
+
+Keys are used for that request only and are never stored or logged. A header that is missing (or
+blank) falls back to the server's `.env` key, so a server with an empty `.env` charges nothing to
+anyone: without an OpenRouter key, verdicts and explanations are rule-based.
+
+```bash
+curl -X POST http://localhost:8000/api/analyze \
+  -H "Content-Type: application/json" \
+  -H "X-GitHub-Token: github_pat_..." \
+  -H "X-OpenRouter-Key: sk-or-..." \
+  -d '{"mode": "package", "package": "express"}'
+```
 
 ## Project layout
 
@@ -256,3 +277,7 @@ frontend/src/
   lib/         ecosystems, search history (localStorage), formatting, steps and verdict helpers
   types/       TypeScript mirrors of the backend models
 ```
+
+## License
+
+[MIT](LICENSE)
