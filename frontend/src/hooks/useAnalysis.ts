@@ -102,8 +102,16 @@ function applyEvent(state: AnalysisState, event: AnalysisEvent): AnalysisState {
   }
 }
 
-/** A finished analysis from history, in the same shape a live run ends in. */
 function restore({ report, detection, savedAt }: SavedSearch): AnalysisState {
+  return finishedState(report, detection, savedAt)
+}
+
+/** A finished analysis, in the same shape a live run ends in. */
+export function finishedState(
+  report: AnalysisReport,
+  detection: EcosystemDetection | null,
+  savedAt: number | null = null,
+): AnalysisState {
   return {
     ...initialState,
     status: "done",
