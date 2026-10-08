@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 from pydantic import SecretStr
 
+from app.domain.errors import InvalidInputError
+
 GITHUB_TOKEN_HEADER = "X-GitHub-Token"
 OPENROUTER_KEY_HEADER = "X-OpenRouter-Key"
 
@@ -34,6 +36,13 @@ class Credentials:
         )
 
 
+MAX_KEY_LENGTH = 512
+
+
 def _secret(value: str | None) -> SecretStr | None:
     value = (value or "").strip()
-    return SecretStr(value) if value else None
+    if not value:
+        return None
+    if len(value) > MAX_KEY_LENGTH or not value.isascii() or not value.isprintable() or " " in value:
+        raise InvalidInputError(f"Keys must be printable ASCII without spaces, up to {MAX_KEY_LENGTH} characters.")
+    return SecretStr(value)

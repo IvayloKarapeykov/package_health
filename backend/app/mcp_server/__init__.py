@@ -33,8 +33,8 @@ def build_mcp_server(
 
     async def analyze(ctx: Context, request: Callable[[], PackageRequest | ManifestRequest]) -> AnalysisReport:
         # Over HTTP the caller's keys arrive as headers; over stdio there are none and `.env` applies.
-        credentials = Credentials.from_headers(ctx.headers or {})
         try:
+            credentials = Credentials.from_headers(ctx.headers or {})
             with admit(ctx):
                 return await runners(credentials).run(request())
         except LimitExceeded as exc:
