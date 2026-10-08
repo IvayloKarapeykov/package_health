@@ -1,0 +1,55 @@
+<Steps>
+
+### Open the analyzer
+
+Go to [the analyzer](/app). There's nothing to sign up for.
+
+### Check a package
+
+Type a package name and press **Analyze**. Leave the registry on **Auto-detect**: it works out
+where the name lives, and picks the registry where it's most used if several publish it.
+
+To check a specific version, add it the way that ecosystem writes it:
+
+```text title="examples"
+express@4.19.2
+requests==2.31.0
+org.apache.logging.log4j:log4j-core:2.14.1
+```
+
+### Or check a whole project
+
+Switch to **Dependency file** and paste your `package.json`, `requirements.txt`, `pom.xml` or any
+[supported file](/docs/introduction#supported-ecosystems). The format is detected from the content.
+Up to 40 packages are checked, 8 at a time.
+
+### Read the results
+
+Packages are sorted worst first. Each card shows the verdict, a health score out of 100, the
+reasons and, where it makes sense, alternatives that exist in the same registry.
+
+</Steps>
+
+## Add your keys (optional)
+
+Without keys you get rule-based verdicts, and GitHub data shares a limit of 60 requests an hour with
+everyone. Open **Add keys** in the analyzer to use your own:
+
+| Key | What it adds |
+| --- | --- |
+| GitHub token | Your own 5,000 GitHub requests an hour |
+| OpenRouter key | Verdicts from Jev and explanations written by an LLM |
+
+<Tip>
+  A GitHub token with public repository access only is enough. It can read public data and nothing
+  else.
+</Tip>
+
+## Next steps
+
+- Learn [how verdicts work](/docs/how-verdicts-work), from raw signals to the final call.
+- Connect your coding agent:
+
+```bash
+claude mcp add --transport http package-health https://api.vet.ivaylokarapeykov.com/mcp
+```

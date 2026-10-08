@@ -1,4 +1,4 @@
-import { Coffee, ScanSearch } from "lucide-react"
+import { BookOpen, Coffee, ScanSearch } from "lucide-react"
 import { Link } from "react-router"
 
 import { GitHubIcon } from "@/components/icons/GitHubIcon"
@@ -15,6 +15,10 @@ export function SiteFooter() {
           <Link to="/app" className={LINK}>
             <ScanSearch className="size-4" aria-hidden />
             Analyze
+          </Link>
+          <Link to="/docs" className={LINK}>
+            <BookOpen className="size-4" aria-hidden />
+            Docs
           </Link>
           <a href={GITHUB_URL} target="_blank" rel="noreferrer" className={LINK}>
             <GitHubIcon className="size-4" />

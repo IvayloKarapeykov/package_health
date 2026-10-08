@@ -1,0 +1,37 @@
+Package Health answers one question before you add a dependency: **should I use this library?**
+Give it a package name or a whole dependency file. Each package comes back **recommended**,
+**caution** or **avoid**, with the reasons and better alternatives when there are any.
+
+## What it looks at
+
+| Signal | What it checks | Source |
+| --- | --- | --- |
+| Adoption | Downloads, or how many packages depend on it | The package's registry |
+| Maintenance | Releases, last commit, open issues, archived or deprecated status | The registry and GitHub |
+| Security | Known vulnerabilities, including in the version you pinned | [OSV.dev](https://osv.dev) |
+
+## Ways to use it
+
+- **[The analyzer](/app)** in your browser. The [Quickstart](/docs/quickstart) takes a minute.
+- **Your AI coding agent**, over MCP, so it checks packages before installing them.
+- **The HTTP API**, for scripts and CI.
+- **Your own server.** The whole project is open source.
+
+## Supported ecosystems
+
+| Ecosystem | Dependency files |
+| --- | --- |
+| npm | `package.json`, `package-lock.json`, `pnpm-lock.yaml` |
+| PyPI | `requirements.txt`, `pyproject.toml`, `Pipfile` |
+| Maven | `pom.xml`, `build.gradle`, `build.gradle.kts` |
+| NuGet | `*.csproj`, `Directory.Packages.props` |
+| Go | `go.mod` |
+| crates.io | `Cargo.toml` |
+| RubyGems | `Gemfile` |
+| Packagist | `composer.json` |
+
+## Free, with your own keys
+
+There are no accounts and no paid plans. Everything works without keys. Adding your own
+[GitHub token or OpenRouter key](/app?keys) raises your limits and turns on AI verdicts, billed to
+you directly. Keys are used for your request only and never stored.

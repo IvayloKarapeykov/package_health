@@ -7,7 +7,8 @@ import { editorTheme } from "@/components/editor/theme"
 
 export interface CodeViewProps {
   code: string
-  language: CodeLanguage
+  /** Omit for plain text. */
+  language?: CodeLanguage
   lineNumbers?: boolean
 }
 
@@ -39,9 +40,11 @@ export default function CodeView({ code, language, lineNumbers: showLineNumbers 
       }),
     })
     let cancelled = false
-    void loadLanguage(language).then((extension) => {
-      if (!cancelled) view.dispatch({ effects: syntax.reconfigure(extension) })
-    })
+    if (language) {
+      void loadLanguage(language).then((extension) => {
+        if (!cancelled) view.dispatch({ effects: syntax.reconfigure(extension) })
+      })
+    }
     return () => {
       cancelled = true
       view.destroy()
