@@ -278,6 +278,10 @@ frontend/src/
   types/       TypeScript mirrors of the backend models
 ```
 
+## Support
+
+The project is free and stays free. If it saved you time, you can [buy me a coffee](https://buymeacoffee.com/ipkd3v). ☕
+
 ## License
 
 [MIT](LICENSE)
