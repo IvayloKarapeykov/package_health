@@ -1,286 +1,165 @@
-# Package Health Advisor
+# Package Health
 
-**"Should I use this library?"** Give it a package name, or paste a dependency file. For each
-dependency it checks adoption and release history, GitHub activity (last commit, open issues,
-stars) and known vulnerabilities. It then returns a verdict with reasons and suggests
-alternatives.
+Should you add that library to your project? Give it a package name or paste a dependency file,
+and it tells you whether each dependency is **recommended**, worth using with **caution**, or
+better **avoided**, with the reasons and alternatives.
 
-It supports eight ecosystems:
+For every package it looks at:
 
-| Ecosystem | Dependency files | Metadata & releases | Adoption signal |
-| --- | --- | --- | --- |
-| **npm** (JS/TS, incl. pnpm) | `package.json`, `package-lock.json`, `pnpm-lock.yaml` | npm registry | weekly downloads |
-| **PyPI** (Python) | `requirements*.txt`, `pyproject.toml`, `Pipfile` | PyPI JSON API | weekly downloads (pypistats; dependents if rate limited) |
-| **Maven Central** (Java/Kotlin) | `pom.xml`, `build.gradle(.kts)` | deps.dev | dependent packages |
-| **NuGet** (C#/.NET) | `*.csproj`, `Directory.Packages.props` | deps.dev | all-time downloads |
-| **Go modules** | `go.mod` | deps.dev | none published (GitHub carries it) |
-| **crates.io** (Rust) | `Cargo.toml` | crates.io API | weekly average of 90-day downloads |
-| **RubyGems** (Ruby) | `Gemfile` | deps.dev | all-time downloads |
-| **Packagist** (PHP) | `composer.json` | Packagist API | weekly average of monthly downloads |
+- **Adoption**: downloads or dependent packages
+- **Maintenance**: release history, last commit, open issues, archived or deprecated status
+- **Security**: known vulnerabilities from [OSV.dev](https://osv.dev), including whether your pinned version is affected
 
-GitHub, OSV.dev, the scoring rules, Jev and the LLM are shared by every ecosystem.
+It's free and open source. You bring your own API keys, and it works without any (see [Your keys](#your-keys)).
 
-- **Backend:** Python, FastAPI, and a LangGraph agent. Verdicts come from Jev (`typesafe/jev-1.13`), TypeSafe's
-  decision model, and the reasons, alternatives and summary are written by `z-ai/glm-5.3-flash`. Both run via OpenRouter.
-- **Frontend:** React, TypeScript, Vite, Tailwind CSS and shadcn/ui.
+## Supported ecosystems
 
-## How the agent works
+| Ecosystem | Dependency files |
+| --- | --- |
+| npm (JavaScript, TypeScript) | `package.json`, `package-lock.json`, `pnpm-lock.yaml` |
+| PyPI (Python) | `requirements.txt`, `pyproject.toml`, `Pipfile` |
+| Maven (Java, Kotlin) | `pom.xml`, `build.gradle`, `build.gradle.kts` |
+| NuGet (C#, .NET) | `*.csproj`, `Directory.Packages.props` |
+| Go | `go.mod` |
+| crates.io (Rust) | `Cargo.toml` |
+| RubyGems (Ruby) | `Gemfile` |
+| Packagist (PHP) | `composer.json` |
 
-The main graph is a map-reduce built on LangGraph's **Send API**. Each dependency runs through a
-per-package **subgraph**:
+For a single package you don't have to pick the ecosystem: `@scope/pkg` can only be npm,
+`group:artifact` only Maven, and a plain name like `requests` is looked up everywhere and matched
+to the registry where it's most used.
 
-```mermaid
-%%{init: {"theme": "neutral"}}%%
-flowchart TB
-    subgraph browser["1 · Browser — React + TypeScript"]
-        direction LR
-        form["Search form<br/>package or dependency file"] --> hook["useAnalysis<br/>applies each stream event"]
-        hook --> results["Results<br/>progress cards → report"]
-        hook --> history["Search history<br/>localStorage"]
-    end
+## Getting started
 
-    subgraph api["2 · Backend API — FastAPI"]
-        direction LR
-        middleware["Request ID<br/>middleware"] --> routes["Routes<br/>/api/analyze/stream"] --> runner["AnalysisRunner<br/>graph updates → events"]
-    end
-
-    subgraph graph_main["3 · LangGraph main graph — map-reduce"]
-        direction LR
-        parse["parse_input<br/>detect ecosystem or file"] -- "Send() per dependency<br/>up to 8 in parallel" --> assess[["assess_package × N"]]
-        assess --> report["compile_report<br/>merge, sort, summary"]
-    end
-
-    subgraph package["4 · assess_package subgraph — one per dependency"]
-        direction LR
-        collect["collect<br/>Python"] --> score["score<br/>rules"] --> decide["decide<br/>Jev"] --> explain["explain<br/>GLM"] --> verify["verify_alternatives<br/>Python"] --> finalize["finalize"]
-        collect -. "not found or crashed" .-> finalize
-        explain -. "no alternatives" .-> finalize
-    end
-
-    sources[("Registries · GitHub · OSV.dev")]
-    openrouter[("OpenRouter<br/>Jev + GLM")]
-    langsmith[("LangSmith<br/>optional traces")]
-
-    browser -- "POST /api/analyze/stream<br/>⇅ SSE: plan · progress · assessment · report · error" --> api
-    api -- "runs" --> graph_main
-    graph_main -- "each assess_package" --> package
-    package -- "facts, alternative checks" --> sources
-    package -- "verdict, explanation" --> openrouter
-    api -. "traces" .-> langsmith
-
-    classDef model fill:#eef2ff,stroke:#818cf8,color:#1e1b4b
-    class decide,explain,openrouter model
-```
-
-1. **`parse_input`** reads either one package spec (`requests>=2.31`, `org.slf4j:slf4j-api:2.0.9`)
-   or a dependency file. With `"ecosystem": "auto"` (the default) a single package's registry is
-   detected first (see below). The file's format is detected from its content. Names are normalized and
-   validated by the ecosystem's adapter. Non-registry specs (git, path, workspace) are skipped.
-2. **Fan-out (map):** one `Send("assess_package", …)` per dependency. The subgraphs run in
-   parallel, and `max_concurrency` limits how many run at once. Inside each subgraph:
-   - **`collect`:** the ecosystem adapter fetches registry metadata and adoption, then GitHub and
-     OSV run concurrently.
-   - **`score`:** deterministic, explainable rules. A package that is deprecated, abandoned,
-     archived, or has a critical vulnerability is always "avoid".
-   - **`decide`:** **Jev** picks recommended / caution / avoid and returns a confidence score.
-     Hard rules win without asking Jev. Jev gets pre-interpreted facts ("last release 3 years
-     ago"), not raw dates, and doesn't see the rule verdict.
-   - **`explain`:** the **LLM** writes a summary, reasons and alternatives for that verdict, all
-     grounded in the collected data. Alternatives must come from the same ecosystem.
-   - **`verify_alternatives`:** keeps only suggestions that really exist in that registry, and
-     adds their adoption numbers.
-3. **`compile_report` (reduce):** the `assessments` channel uses an `operator.add` reducer, so
-   every subgraph's result is merged. The report sorts packages worst first, counts the verdicts,
-   and adds an LLM-written executive summary.
-
-Progress streams to the UI over SSE (`plan` → `progress`/`assessment` × N → `report`). Each
-subgraph node publishes its step on LangGraph's `custom` stream, and the runner reads it with
-`subgraphs=True`.
-
-**Graceful degradation:**
-
-- A failing data source (a rate limit, a missing repository) is recorded on the package, and the
-  analysis continues.
-- If Jev fails, the rule-based verdict is used. If the LLM fails (after one retry), template
-  reasons are used. With no API key, both fall back to the rules.
-- Each subgraph node is guarded: a crash marks that package as failed and never breaks the report.
-
-### Auto-detecting a package's ecosystem
-
-`EcosystemDetector` (`services/ecosystem_detection.py`) resolves `"auto"` in three steps:
-
-1. **Syntax:** each adapter accepts only names that fit its rules. `@scope/pkg` can only be npm,
-   `group:artifact` only Maven, `vendor/pkg` only Packagist, `github.com/owner/repo` only Go and
-   `django>=4.2` only PyPI. One match means no network call.
-2. **Lookup:** a plain name (`requests`, `serde`, `rails`) is checked in every remaining
-   registry at once, which takes about a second. These lookups are cached, so the analysis reuses
-   them.
-3. **Ranking:** when several registries publish the name, the one where it's most used wins.
-   The scoring policy's adoption levels map weekly downloads, total downloads and dependents onto
-   one comparable scale.
-
-The plan event reports the result (`detection: {ecosystem, alsoFoundIn}`), and the UI offers the
-other registries in one click.
-
-### Observability
-
-**Logs.** Every request gets an ID (a valid incoming `X-Request-ID` is kept, otherwise one is
-generated). It is returned in the `X-Request-ID` header and in SSE `error` events, and the UI shows
-it as a reference on server errors. A context variable carries it into every log line, including
-lines from nodes running in parallel subgraphs. `LOG_FORMAT=json` writes one JSON object per line
-for log aggregators; `text` is the readable default.
-
-Each analysis ends with exactly one line: *finished*, *rejected* (invalid input), *failed* or
-*cancelled* (the client disconnected). The *finished* line includes the fallbacks users never see
-as errors:
-
-```text
-INFO app.agent.runner [demo-run-1]: Analysis finished ecosystem=pypi manifest=requirements.txt
-  packages=3 duration_ms=41357 overall=avoid verdicts=recommended:2,avoid:1
-  verdict_sources=rules:1,jev:2 explanation_sources=llm:3 upstream_issues=github:1
-```
-
-Upstream calls log their source, status and duration (at debug level). Rate limits and 5xx
-responses are warnings, and GitHub's remaining quota is included whenever it is reported.
-
-**Traces.** With `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY`, every run is traced in
-LangSmith. The root run is `package-health-analysis`, tagged `mode:*` and `ecosystem:*`, with the
-request ID in its metadata so a trace can be matched to its log lines. Inside it are `parse_input`,
-one `assess_package` subgraph per dependency (`collect → score → decide → explain → …`), the GLM
-calls with prompts and token counts, and Jev (traced explicitly, since it is called over plain
-HTTP) under each `decide`. `LANGSMITH_HIDE_INPUTS=true` keeps pasted files out of LangSmith.
-`langgraph dev` reads the same variables from `.env`, so Studio runs are traced too.
-
-### Adding an ecosystem
-
-1. Write an adapter: subclass `EcosystemAdapter` in `app/ecosystems/`, or `DepsDevAdapter` if
-   deps.dev covers the ecosystem. It supplies `get_package`, `get_adoption`, `package_url`, name
-   rules and the OSV ecosystem name.
-2. Write a `ManifestParser` for each of its dependency files in `app/manifests/`, and list it in
-   `manifests/registry.py`.
-3. Register the adapter in `container.py`, then add the ecosystem to `domain/ecosystems.py` and
-   the frontend's `lib/ecosystems.ts`.
-
-The graph, scoring, Jev and the LLM need no changes.
-
-## Running it
-
-### Backend
+You need Python 3.12+ and Node.js 20.19+ or 22.12+.
 
 ```bash
+# Backend, on http://localhost:8000
 cd backend
 python3 -m venv .venv
 .venv/bin/pip install -r requirements-dev.txt
-cp .env.example .env        # add OPENROUTER_API_KEY (and optionally GITHUB_TOKEN)
+cp .env.example .env
 .venv/bin/uvicorn app.main:app --reload --port 8000
-.venv/bin/python -m pytest  # tests
-.venv/bin/ruff check app tests
-npx pyright                 # type check (from the repo root; config in pyrightconfig.json)
 ```
-
-### LangGraph Studio (visualize and debug the graph)
 
 ```bash
-cd backend
-.venv/bin/langgraph dev     # reads langgraph.json, serves on http://127.0.0.1:2024
-```
-
-Studio opens in your browser at
-`https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024`. Pick the
-`package_health` graph and submit input such as:
-
-```json
-{ "request": { "mode": "package", "ecosystem": "auto", "package": "requests" } }
-```
-
-```json
-{ "request": { "mode": "manifest", "content": "module example.com/app\n\nrequire github.com/gin-gonic/gin v1.6.0\n", "includeDev": true } }
-```
-
-`content` is the dependency file's text as a string. Its format is detected automatically, or
-you can add `"filename": "go.mod"`. Turn on the **custom** stream mode to watch each package's
-steps. The graph entry point is `app/studio.py`, which uses the same wiring as the FastAPI app.
-
-### Frontend
-
-```bash
+# Frontend, on http://localhost:5173
 cd frontend
 npm install
-npm run dev                 # http://localhost:5173 (proxies /api to :8000)
+npm run dev
 ```
 
-### Configuration (`backend/.env`)
+Keys in `.env` are optional. Without them it still works, with the limits described below.
 
-| Variable | Default | Notes |
+## Your keys
+
+| Key | Without it | With it |
 | --- | --- | --- |
-| `OPENROUTER_API_KEY` | – | Fallback for requests without `X-OpenRouter-Key`. If neither is set, verdicts are rule-based only |
-| `LLM_MODEL` | `z-ai/glm-5.3-flash` | Any OpenRouter model id |
-| `LLM_STRUCTURED_OUTPUT_METHOD` | `function_calling` | `json_schema` / `json_mode` for models without tool calling |
-| `USE_JEV_VERDICTS` | `true` | Set to `false` to use the rule-based verdict instead of Jev |
-| `JEV_MODEL` | `typesafe/jev-1.13` | Or `~typesafe/jev-latest` to track the newest version |
-| `GITHUB_TOKEN` | – | Fallback for requests without `X-GitHub-Token`. Raises GitHub's limit from 60 to 5,000 requests/hour. Each package uses 2 requests. |
-| `MAX_PACKAGES` | `40` | Cap on dependencies per file |
-| `MAX_CONCURRENCY` | `8` | Parallel package subgraphs |
-| `LOG_LEVEL` / `LOG_FORMAT` | `INFO` / `text` | `json` for log aggregators |
-| `LANGSMITH_TRACING` | `false` | Trace every run in LangSmith (needs `LANGSMITH_API_KEY`) |
-| `LANGSMITH_PROJECT` | `package-health-advisor` | Also `LANGSMITH_ENDPOINT`, `LANGSMITH_HIDE_INPUTS` |
+| [GitHub token](https://github.com/settings/personal-access-tokens) | 60 GitHub requests per hour, about 30 packages | 5,000 requests per hour |
+| [OpenRouter key](https://openrouter.ai/keys) | Rule-based verdicts and template explanations | Verdicts from [Jev](https://openrouter.ai/docs/guides/community/jev) and written explanations from an LLM, billed to your OpenRouter credits |
+
+A fine-grained GitHub token with read-only access to public repositories is enough.
+
+Put them in `backend/.env` (`GITHUB_TOKEN`, `OPENROUTER_API_KEY`), or send them with each request as
+`X-GitHub-Token` and `X-OpenRouter-Key` headers. Header keys are used for that request only and
+are never stored or logged. They take priority over `.env`, so a public server can run with an
+empty `.env` and every user pays for their own usage.
 
 ## API
 
-- `POST /api/analyze/stream` returns Server-Sent Events.
-- `POST /api/analyze` returns the final report as JSON.
-- `GET /api/ecosystems` lists the supported ecosystems and their dependency files.
-
-The request body is either `{"mode": "package", "ecosystem": "auto", "package": "express"}` (or a
-specific ecosystem id instead of `auto`, which is the default) or
-`{"mode": "manifest", "content": "…", "filename": "pom.xml", "includeDev": true}`. `filename` is
-optional.
-
-### Bring your own keys
-
-Analyses can run on the caller's own keys, sent as request headers:
-
-| Header | Effect |
+| Endpoint | Returns |
 | --- | --- |
-| `X-GitHub-Token` | GitHub's limit becomes the caller's own 5,000 requests/hour. A fine-grained token with public read-only access is enough. |
-| `X-OpenRouter-Key` | Verdicts from Jev and explanations from the LLM, billed to the caller's OpenRouter credits |
-
-Keys are used for that request only and are never stored or logged. A header that is missing (or
-blank) falls back to the server's `.env` key, so a server with an empty `.env` charges nothing to
-anyone: without an OpenRouter key, verdicts and explanations are rule-based.
+| `POST /api/analyze` | The full report as JSON |
+| `POST /api/analyze/stream` | Progress as Server-Sent Events, then the report |
+| `GET /api/ecosystems` | Supported ecosystems and their dependency files |
 
 ```bash
 curl -X POST http://localhost:8000/api/analyze \
   -H "Content-Type: application/json" \
   -H "X-GitHub-Token: github_pat_..." \
-  -H "X-OpenRouter-Key: sk-or-..." \
   -d '{"mode": "package", "package": "express"}'
 ```
 
-## Project layout
+To analyze a file instead, send `{"mode": "manifest", "content": "<file contents>"}`. The format is
+detected from the content, or you can add `"filename": "pom.xml"`. Interactive docs are at
+`http://localhost:8000/docs`.
 
-```text
-backend/app/
-  core/        config, HTTP helpers, TTL cache, time utils, logging (request IDs), tracing setup
-  domain/      pydantic models (camelCase JSON), ecosystems table, requests, stream events, errors
-  ecosystems/  one adapter per registry (npm, PyPI, crates.io, Packagist, and deps.dev-backed Go/Maven/NuGet/RubyGems)
-  manifests/   one parser per dependency file format, plus format detection
-  clients/     shared GitHub, OSV and Jev clients
-  services/    input parsing, ecosystem detection, signal collection, scoring rules, heuristic advice, alternatives
-  agent/       LangGraph state, main graph, per-package subgraph, runner, LLM explainer, Jev decider, prompts
-  api/         FastAPI routes
-  container.py composition root (dependency wiring)
-frontend/src/
-  api/         SSE parser and streaming client
-  hooks/       useAnalysis (reducer over stream events), useSearchHistory, useTheme
-  components/  analysis/* feature components, editor/* dependency file editor (CodeMirror), effects/* waves, layout/*, ui/* (shadcn)
-  lib/         ecosystems, search history (localStorage), formatting, steps and verdict helpers
-  types/       TypeScript mirrors of the backend models
+## How it works
+
+The backend is a [LangGraph](https://langchain-ai.github.io/langgraph/) agent behind FastAPI. It
+parses the input, then checks every dependency in parallel (up to 8 at once) and merges the
+results into one report, sorted worst first.
+
+Each package goes through the same steps:
+
+```mermaid
+flowchart LR
+    collect["Collect<br/>registry, GitHub, OSV"] --> score["Score<br/>rules"] --> decide["Decide<br/>Jev"] --> explain["Explain<br/>LLM"] --> verify["Verify<br/>alternatives"]
 ```
+
+1. **Collect** data from the package's registry, its GitHub repository and OSV.dev.
+2. **Score** it with fixed rules. A deprecated package, an archived repository or a critical
+   vulnerability in the latest version always means "avoid".
+3. **Decide** the verdict with Jev, a decision model, unless a rule already settled it.
+4. **Explain** the verdict and suggest alternatives with an LLM (`z-ai/glm-5.3-flash` by default).
+5. **Verify** that the suggested alternatives actually exist in the same registry.
+
+Nothing in that chain is required to succeed. If a data source is down or rate limited, the report
+says so and carries on. If Jev or the LLM fails, or there's no OpenRouter key, the rule-based
+verdict and template explanations are used. If one package crashes, the others are unaffected.
+
+The frontend is React, TypeScript, Vite, Tailwind CSS and shadcn/ui. It shows each package's
+progress as it streams in and keeps recent searches in your browser.
+
+## Configuration
+
+All settings live in `backend/.env`; see [`.env.example`](backend/.env.example).
+
+| Variable | Default | |
+| --- | --- | --- |
+| `GITHUB_TOKEN` | | See [Your keys](#your-keys) |
+| `OPENROUTER_API_KEY` | | See [Your keys](#your-keys) |
+| `LLM_MODEL` | `z-ai/glm-5.3-flash` | Any OpenRouter model |
+| `USE_JEV_VERDICTS` | `true` | `false` lets the rules decide instead of Jev |
+| `MAX_PACKAGES` | `40` | Most dependencies analyzed per file |
+| `MAX_CONCURRENCY` | `8` | Packages analyzed in parallel |
+| `LOG_FORMAT` | `text` | `json` for log aggregators |
+| `LANGSMITH_TRACING` | `false` | Trace runs in [LangSmith](https://smith.langchain.com) (needs `LANGSMITH_API_KEY`) |
+
+## Development
+
+```bash
+cd backend
+.venv/bin/python -m pytest      # tests
+.venv/bin/ruff check app tests  # lint
+npx pyright                     # type check, run from the repo root
+.venv/bin/langgraph dev         # open the graph in LangGraph Studio
+```
+
+```bash
+cd frontend
+npm run lint
+npm run build
+```
+
+Every response carries an `X-Request-ID` header. The same ID appears on all of that request's log
+lines and in its LangSmith trace, and the UI shows it when something goes wrong.
+
+### Adding an ecosystem
+
+1. Write an adapter in `backend/app/ecosystems/`: subclass `EcosystemAdapter`, or `DepsDevAdapter`
+   if [deps.dev](https://deps.dev) covers the ecosystem.
+2. Write a parser for each of its dependency files in `backend/app/manifests/` and register it in
+   `manifests/registry.py`.
+3. Register the adapter in `backend/app/container.py`, and add the ecosystem to
+   `backend/app/domain/ecosystems.py` and `frontend/src/lib/ecosystems.ts`.
+
+The scoring, the agent and the UI work with it as is.
 
 ## Support
 
-The project is free and stays free. If it saved you time, you can [buy me a coffee](https://buymeacoffee.com/ipkd3v). ☕
+Package Health is free and always will be. If it saved you some time, you can
+[buy me a coffee](https://buymeacoffee.com/ipkd3v).
 
 ## License
 
