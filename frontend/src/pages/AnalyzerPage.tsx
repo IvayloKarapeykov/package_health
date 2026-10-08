@@ -6,13 +6,9 @@ import { RecentSearches } from "@/components/analysis/RecentSearches"
 import { ResultsView } from "@/components/analysis/ResultsView"
 import { SearchPill } from "@/components/analysis/SearchPill"
 import { WaveBorder } from "@/components/effects/WaveBorder"
-import { AppBackground } from "@/components/layout/AppBackground"
 import { Hero } from "@/components/layout/Hero"
-import { ThemeToggle } from "@/components/layout/ThemeToggle"
-import { Wordmark } from "@/components/layout/Wordmark"
 import { useAnalysis } from "@/hooks/useAnalysis"
 import { useSearchHistory } from "@/hooks/useSearchHistory"
-import { useTheme } from "@/hooks/useTheme"
 import { saveSearch } from "@/lib/searchHistory"
 import { cn } from "@/lib/utils"
 import type { AnalysisRequest, Ecosystem } from "@/types/analysis"
@@ -26,9 +22,8 @@ function describeRequest(request: AnalysisRequest | null, manifest: string | nul
   return plannedCount ? `${file} · ${plannedCount} deps` : file
 }
 
-export default function App() {
-  const { theme, toggleTheme } = useTheme()
-  const { state, analyze, restore, reset } = useAnalysis({ onReport: saveSearch })
+export default function AnalyzerPage() {
+  const { state, analyze, restore } = useAnalysis({ onReport: saveSearch })
   const history = useSearchHistory()
   const [lastRequest, setLastRequest] = useState<AnalysisRequest | null>(null)
   const [searchOpen, setSearchOpen] = useState(true)
@@ -71,11 +66,6 @@ export default function App() {
     [handleAnalyze, lastRequest],
   )
 
-  const handleReset = useCallback(() => {
-    reset()
-    setSearchOpen(true)
-  }, [reset])
-
   useEffect(() => {
     if (!active || !searchOpen) return
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -86,24 +76,22 @@ export default function App() {
   }, [active, searchOpen])
 
   return (
-    <div className="relative min-h-svh">
-      <AppBackground />
-      <Wordmark onClick={handleReset} className="fixed top-7 left-6 z-20" />
+    <>
+      <title>Analyze · Package Health</title>
       {!showPanel && (
         <SearchPill
           summary={describeRequest(lastRequest, state.manifest, state.planned.length)}
           running={running}
           failed={failed}
           onClick={() => setSearchOpen(true)}
-          className="fixed top-4 left-1/2 z-20 -translate-x-1/2"
+          className="fixed top-4 left-1/2 z-20 -translate-x-1/2 max-sm:top-[4.25rem]"
         />
       )}
-      <ThemeToggle theme={theme} onToggle={toggleTheme} className="fixed top-4 right-4 z-20" />
 
       <main
         className={cn(
           "mx-auto max-w-4xl px-4 pb-20 transition-[padding] duration-700 ease-out",
-          active ? "pt-20" : "pt-[20svh]",
+          active ? "pt-20 max-sm:pt-32" : "pt-[20svh]",
         )}
       >
         <Hero compact={active} />
@@ -152,6 +140,6 @@ export default function App() {
           </div>
         )}
       </main>
-    </div>
+    </>
   )
 }
