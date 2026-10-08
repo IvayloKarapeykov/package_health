@@ -1,0 +1,856 @@
+{
+  "request": {
+    "mode": "manifest",
+    "content": "requests==2.31.0\nflask>=3.0\nnose==1.3.7\npycrypto==2.6.1\n",
+    "filename": "requirements.txt",
+    "includeDev": true
+  },
+  "report": {
+    "ecosystem": "pypi",
+    "manifest": "requirements.txt",
+    "overallVerdict": "avoid",
+    "summary": "The dependency file is in mixed health: requests and flask are well-maintained and recommended, but two production dependencies are abandoned. The most urgent problem is pycrypto, an abandoned cryptographic library with four known vulnerabilities including a critical buffer overflow and weak key generation, followed by nose, which has had no release in over 11 years and no maintenance path. Separately, the pinned requests 2.31.0 carries 6 known vulnerabilities and the bottom of the flask range (3.0.x) carries 2, both fixed in newer releases. The single most valuable next step is replacing pycrypto with a maintained alternative such as pycryptodome or cryptography.",
+    "counts": {
+      "recommended": 2,
+      "caution": 0,
+      "avoid": 2,
+      "unknown": 0
+    },
+    "assessments": [
+      {
+        "dependency": {
+          "name": "nose",
+          "ecosystem": "pypi",
+          "requested": "==1.3.7",
+          "kind": "prod"
+        },
+        "verdict": "avoid",
+        "score": 80,
+        "summary": "nose is effectively abandoned: its last release (1.3.7) shipped over 11 years ago and there have been zero releases in the past 12 months, with no linked source repository in its metadata. Despite still pulling ~1.35M weekly downloads, the project has no maintenance path, so teams should migrate to a maintained test runner.",
+        "reasons": [
+          "No release in 4,146 days (11+ years) — the latest version 1.3.7 dates from 2015, and 0 releases in the last 12 months mean any breakage from newer Python versions will never be fixed upstream.",
+          "No GitHub repository is linked in the package metadata, so there is no visible issue tracker, code history, or way to verify maintenance activity.",
+          "The package does not ship type information and has 0 declared dependencies, offering no modern packaging signals; it predates current Python packaging conventions.",
+          "Adoption is high (1,348,647 weekly downloads), which reflects legacy usage rather than health — many of those installs are likely transitive leftovers from old CI configs, and the lack of known vulnerabilities (0 in OSV) doesn't offset the abandonment risk.",
+          "Python's built-in unittest module covers nose's core use case, and actively maintained runners exist that extend it with better output, fixtures, and plugin ecosystems."
+        ],
+        "findings": [
+          {
+            "impact": "positive",
+            "message": "No known vulnerabilities",
+            "penalty": 0
+          },
+          {
+            "impact": "negative",
+            "message": "No release in 11 years",
+            "penalty": 20
+          },
+          {
+            "impact": "positive",
+            "message": "Widely used (1,348,647 weekly downloads)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "pytest",
+            "reason": "The de facto standard Python test runner, actively maintained with a huge plugin ecosystem and far richer features than nose ever offered.",
+            "url": "https://pypi.org/project/pytest/",
+            "adoption": {
+              "weeklyDownloads": 188490757,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          },
+          {
+            "name": "nose2",
+            "reason": "The community-maintained successor to nose that keeps its unittest-based plugin model while supporting current Python versions.",
+            "url": "https://pypi.org/project/nose2/",
+            "adoption": {
+              "weeklyDownloads": 138863,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          }
+        ],
+        "signals": {
+          "dependency": {
+            "name": "nose",
+            "ecosystem": "pypi",
+            "requested": "==1.3.7",
+            "kind": "prod"
+          },
+          "registry": {
+            "latestVersion": "1.3.7",
+            "registryUrl": "https://pypi.org/project/nose/",
+            "description": "nose extends unittest to make testing easier",
+            "license": "GNU LGPL",
+            "homepage": "http://readthedocs.org/docs/nose/",
+            "repositoryUrl": "http://readthedocs.org/docs/nose/",
+            "createdAt": "2010-12-14T23:20:25.766733Z",
+            "lastReleaseAt": "2015-06-02T09:12:32.961855Z",
+            "totalVersions": 13,
+            "releasesLastYear": 0,
+            "deprecated": null,
+            "maintainersCount": null,
+            "dependenciesCount": 0,
+            "unpackedSizeBytes": null,
+            "hasTypes": false
+          },
+          "adoption": {
+            "weeklyDownloads": 1348647,
+            "totalDownloads": null,
+            "dependents": null,
+            "note": "last 7 days"
+          },
+          "repository": null,
+          "vulnerabilities": {
+            "totalKnown": 0,
+            "vulnerabilities": [],
+            "requestedVersion": "1.3.7",
+            "requestedPinned": true
+          },
+          "issues": [
+            {
+              "source": "github",
+              "message": "No GitHub repository linked in package metadata"
+            }
+          ]
+        },
+        "verdictSource": "jev",
+        "verdictConfidence": 0.46,
+        "explanationSource": "llm"
+      },
+      {
+        "dependency": {
+          "name": "pycrypto",
+          "ecosystem": "pypi",
+          "requested": "==2.6.1",
+          "kind": "prod"
+        },
+        "verdict": "avoid",
+        "score": 0,
+        "summary": "PyCrypto is an abandoned cryptographic library whose final release (2.6.1) shipped over 12 years ago and carries four known vulnerabilities, including a critical buffer overflow and weak key generation. Despite its still-large install base, it should not be used for any new or existing security-sensitive code.",
+        "reasons": [
+          "The latest and only relevant version, 2.6.1, has 4 known vulnerabilities: a critical buffer overflow (GHSA-cq27-v7xp-c356), a high-severity weak key generation issue (GHSA-6528-wvf6-f6qg), and two further issues including a heap-based overflow in block_template.c that allows arbitrary code execution.",
+          "There has been no release in 4,493 days (over 12 years) and zero releases in the last 12 months, so none of these vulnerabilities will ever be patched — the project is effectively unmaintained.",
+          "Weak ElGamal key parameters (PYSEC-2018-97) mean that even correctly written code using the library can silently produce breakable keys, which is disqualifying for a cryptography package.",
+          "The 2,054,006 weekly downloads show the package is still widely installed, but that reflects legacy lockfiles and tutorials rather than health; adoption does not fix unpatched critical CVEs.",
+          "No GitHub repository is linked in the metadata, so there is no visible upstream to report issues to or track fixes from."
+        ],
+        "findings": [
+          {
+            "impact": "critical",
+            "message": "1 critical-severity vulnerability in the latest version",
+            "penalty": 40
+          },
+          {
+            "impact": "negative",
+            "message": "1 high-severity vulnerability in the latest version",
+            "penalty": 25
+          },
+          {
+            "impact": "negative",
+            "message": "2 unknown-severity vulnerabilities in the latest version",
+            "penalty": 20
+          },
+          {
+            "impact": "negative",
+            "message": "Your pinned version 2.6.1 has 4 known vulnerabilities — upgrade",
+            "penalty": 5
+          },
+          {
+            "impact": "negative",
+            "message": "No release in 12 years",
+            "penalty": 20
+          },
+          {
+            "impact": "positive",
+            "message": "Widely used (2,054,006 weekly downloads)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "pycryptodome",
+            "reason": "A maintained drop-in fork of PyCrypto with the same API, active releases, and the known vulnerabilities fixed — the easiest migration path for existing codebases.",
+            "url": "https://pypi.org/project/pycryptodome/",
+            "adoption": {
+              "weeklyDownloads": 16742656,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          },
+          {
+            "name": "cryptography",
+            "reason": "The de facto standard Python crypto library, actively maintained by the PyCA team with OpenSSL-backed primitives and constant security patching; preferred for new code.",
+            "url": "https://pypi.org/project/cryptography/",
+            "adoption": {
+              "weeklyDownloads": 278387323,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          },
+          {
+            "name": "pynacl",
+            "reason": "Python bindings for libsodium offering modern, misuse-resistant high-level cryptographic APIs for common tasks like encryption and signing.",
+            "url": "https://pypi.org/project/pynacl/",
+            "adoption": {
+              "weeklyDownloads": 38726115,
+              "totalDownloads": null,
+              "dependents": null,
+              "note": "last 7 days"
+            }
+          }
+        ],
+        "signals": {
+          "dependency": {
+            "name": "pycrypto",
+            "ecosystem": "pypi",
+            "requested": "==2.6.1",
+            "kind": "prod"
+          },
+          "registry": {
+            "latestVersion": "2.6.1",
+            "registryUrl": "https://pypi.org/project/pycrypto/",
+            "description": "Cryptographic modules for Python.",
+            "license": "Public domain",
+            "homepage": "http://www.pycrypto.org/",
+            "repositoryUrl": "http://www.pycrypto.org/",
+            "createdAt": "2010-12-17T03:18:31.767626Z",
+            "lastReleaseAt": "2014-06-20T08:10:20.813938Z",
+            "totalVersions": 9,
+            "releasesLastYear": 0,
+            "deprecated": null,
+            "maintainersCount": null,
+            "dependenciesCount": 0,
+            "unpackedSizeBytes": null,
+            "hasTypes": false
+          },
+          "adoption": {
+            "weeklyDownloads": 2054006,
+            "totalDownloads": null,
+            "dependents": null,
+            "note": "last 7 days"
+          },
+          "repository": null,
+          "vulnerabilities": {
+            "totalKnown": 8,
+            "vulnerabilities": [
+              {
+                "id": "GHSA-6528-wvf6-f6qg",
+                "summary": "Pycrypto generates weak key parameters",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2018-6594",
+                  "PYSEC-2018-97"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-6528-wvf6-f6qg",
+                "affectsLatest": true,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-cq27-v7xp-c356",
+                "summary": "Buffer Overflow in pycrypto",
+                "severity": "critical",
+                "aliases": [
+                  "CVE-2013-7459",
+                  "PYSEC-2017-94"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-cq27-v7xp-c356",
+                "affectsLatest": true,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-v367-p58w-98h5",
+                "summary": "PyCrypto makes Use of Insufficiently Random Values",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2012-2417",
+                  "PYSEC-2012-16"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-v367-p58w-98h5",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-x377-f64p-hf5j",
+                "summary": "PyCrypto does not properly reseed PRNG before allowing access",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2013-1445",
+                  "PYSEC-2013-29"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-x377-f64p-hf5j",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2012-16",
+                "summary": "PyCrypto before 2.6 does not produce appropriate prime numbers when using an ElGamal scheme to generate a key, which reduces the signature space or public key space and makes it easier for attackers t",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2012-2417",
+                  "GHSA-v367-p58w-98h5"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2012-16",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2013-29",
+                "summary": "The Crypto.Random.atfork function in PyCrypto before 2.6.1 does not properly reseed the pseudo-random number generator (PRNG) before allowing a child process to access it, which makes it easier for co",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2013-1445",
+                  "GHSA-x377-f64p-hf5j"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2013-29",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2017-94",
+                "summary": "Heap-based buffer overflow in the ALGnew function in block_templace.c in Python Cryptography Toolkit (aka pycrypto) allows remote attackers to execute arbitrary code as demonstrated by a crafted iv pa",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2013-7459",
+                  "GHSA-cq27-v7xp-c356"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2017-94",
+                "affectsLatest": true,
+                "affectsRequested": true
+              },
+              {
+                "id": "PYSEC-2018-97",
+                "summary": "lib/Crypto/PublicKey/ElGamal.py in PyCrypto through 2.6.1 generates weak ElGamal key parameters, which allows attackers to obtain sensitive information by reading ciphertext data (i.e., it does not ha",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2018-6594",
+                  "GHSA-6528-wvf6-f6qg"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2018-97",
+                "affectsLatest": true,
+                "affectsRequested": true
+              }
+            ],
+            "requestedVersion": "2.6.1",
+            "requestedPinned": true
+          },
+          "issues": [
+            {
+              "source": "github",
+              "message": "No GitHub repository linked in package metadata"
+            }
+          ]
+        },
+        "verdictSource": "rules",
+        "verdictConfidence": null,
+        "explanationSource": "llm"
+      },
+      {
+        "dependency": {
+          "name": "requests",
+          "ecosystem": "pypi",
+          "requested": "==2.31.0",
+          "kind": "prod"
+        },
+        "verdict": "recommended",
+        "score": 95,
+        "summary": "requests is a safe, well-maintained choice for HTTP in Python: it's actively developed, has enormous adoption, and the latest release (2.34.2) is clear of all known advisories. The only real action item is that your pinned 2.31.0 carries 6 known vulnerabilities, so bump the pin.",
+        "reasons": [],
+        "findings": [
+          {
+            "impact": "positive",
+            "message": "Latest version is clear of the 16 historical advisories",
+            "penalty": 0
+          },
+          {
+            "impact": "negative",
+            "message": "Your pinned version 2.31.0 has 6 known vulnerabilities — upgrade",
+            "penalty": 5
+          },
+          {
+            "impact": "positive",
+            "message": "6 releases in the last 12 months",
+            "penalty": 0
+          },
+          {
+            "impact": "positive",
+            "message": "Actively developed (commit in the last 30 days)",
+            "penalty": 0
+          },
+          {
+            "impact": "positive",
+            "message": "Widely used (304,223,113 weekly downloads)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [],
+        "signals": {
+          "dependency": {
+            "name": "requests",
+            "ecosystem": "pypi",
+            "requested": "==2.31.0",
+            "kind": "prod"
+          },
+          "registry": {
+            "latestVersion": "2.34.2",
+            "registryUrl": "https://pypi.org/project/requests/",
+            "description": "Python HTTP for Humans.",
+            "license": "Apache-2.0",
+            "homepage": null,
+            "repositoryUrl": "https://github.com/psf/requests",
+            "createdAt": "2011-02-14T08:49:42.641660Z",
+            "lastReleaseAt": "2026-05-14T19:25:26.443000Z",
+            "totalVersions": 158,
+            "releasesLastYear": 6,
+            "deprecated": null,
+            "maintainersCount": null,
+            "dependenciesCount": 4,
+            "unpackedSizeBytes": null,
+            "hasTypes": false
+          },
+          "adoption": {
+            "weeklyDownloads": 304223113,
+            "totalDownloads": null,
+            "dependents": null,
+            "note": "last 7 days"
+          },
+          "repository": {
+            "fullName": "psf/requests",
+            "url": "https://github.com/psf/requests",
+            "description": "A simple, yet elegant, HTTP library.",
+            "stars": 54505,
+            "forks": 12088,
+            "openIssues": 243,
+            "archived": false,
+            "lastCommitAt": "2026-09-21T20:22:33Z"
+          },
+          "vulnerabilities": {
+            "totalKnown": 16,
+            "vulnerabilities": [
+              {
+                "id": "GHSA-652x-xj99-gmcc",
+                "summary": "Exposure of Sensitive Information to an Unauthorized Actor in Requests",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2014-1830",
+                  "PYSEC-2014-14"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-652x-xj99-gmcc",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-9hjg-9r4m-mvj7",
+                "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2024-47081",
+                  "PYSEC-2026-1872"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-9hjg-9r4m-mvj7",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-9wx4-h78v-vm56",
+                "summary": "Requests `Session` object does not verify requests after making first request with verify=False",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2024-35195",
+                  "PYSEC-2026-1873"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-9wx4-h78v-vm56",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-cfj3-7x9c-4p3h",
+                "summary": "Exposure of Sensitive Information to an Unauthorized Actor in Requests",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2014-1829",
+                  "PYSEC-2014-13"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-cfj3-7x9c-4p3h",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-gc5v-m9x4-r6x2",
+                "summary": "Requests has Insecure Temp File Reuse in its extract_zipped_paths() utility function",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2026-25645",
+                  "PYSEC-2026-2275"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-gc5v-m9x4-r6x2",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-j8r2-6x86-q33q",
+                "summary": "Unintended leak of Proxy-Authorization header in requests",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2023-32681",
+                  "PYSEC-2023-74"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-j8r2-6x86-q33q",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-pg2w-x9wp-vw92",
+                "summary": "Python Requests Session Fixation",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2015-2296",
+                  "PYSEC-2015-17"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-pg2w-x9wp-vw92",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-x84v-xcm2-53pg",
+                "summary": "Insufficiently Protected Credentials in Requests",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2018-18074",
+                  "PYSEC-2018-28"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-x84v-xcm2-53pg",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2014-13",
+                "summary": "Requests (aka python-requests) before 2.3.0 allows remote servers to obtain a netrc password by reading the Authorization header in a redirected request.",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2014-1829",
+                  "GHSA-cfj3-7x9c-4p3h"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2014-13",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2014-14",
+                "summary": "Requests (aka python-requests) before 2.3.0 allows remote servers to obtain sensitive information by reading the Proxy-Authorization header in a redirected request.",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2014-1830",
+                  "GHSA-652x-xj99-gmcc"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2014-14",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2015-17",
+                "summary": "The resolve_redirects function in sessions.py in requests 2.1.0 through 2.5.3 allows remote attackers to conduct session fixation attacks via a cookie without a host value in a redirect.",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2015-2296",
+                  "GHSA-pg2w-x9wp-vw92"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2015-17",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2018-28",
+                "summary": "The Requests package before 2.20.0 for Python sends an HTTP Authorization header to an http URI upon receiving a same-hostname https-to-http redirect, which makes it easier for remote attackers to dis",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2018-18074",
+                  "GHSA-x84v-xcm2-53pg"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2018-28",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2023-74",
+                "summary": "Requests is a HTTP library. Since Requests 2.3.0, Requests has been leaking Proxy-Authorization headers to destination servers when redirected to an HTTPS endpoint. This is a product of how we use `re",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2023-32681",
+                  "GHSA-j8r2-6x86-q33q"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2023-74",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2026-1872",
+                "summary": "Requests vulnerable to .netrc credentials leak via malicious URLs",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2024-47081",
+                  "GHSA-9hjg-9r4m-mvj7"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2026-1872",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "PYSEC-2026-1873",
+                "summary": "Requests `Session` object does not verify requests after making first request with verify=False",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2024-35195",
+                  "GHSA-9wx4-h78v-vm56"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2026-1873",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "PYSEC-2026-2275",
+                "summary": "Requests is a HTTP library. Prior to version 2.33.0, the `requests.utils.extract_zipped_paths()` utility function uses a predictable filename when extracting files from zip archives into the system te",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2026-25645",
+                  "GHSA-gc5v-m9x4-r6x2"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2026-2275",
+                "affectsLatest": false,
+                "affectsRequested": true
+              }
+            ],
+            "requestedVersion": "2.31.0",
+            "requestedPinned": true
+          },
+          "issues": []
+        },
+        "verdictSource": "jev",
+        "verdictConfidence": 1.0,
+        "explanationSource": "llm"
+      },
+      {
+        "dependency": {
+          "name": "flask",
+          "ecosystem": "pypi",
+          "requested": ">=3.0",
+          "kind": "prod"
+        },
+        "verdict": "recommended",
+        "score": 95,
+        "summary": "Flask remains a safe, well-supported choice for the >=3.0 range, but you should pin to 3.1.3 or later since the bottom of your range (3.0.x) carries 2 known vulnerabilities that are fixed in the latest release.",
+        "reasons": [
+          "Massive adoption: 38,225,189 weekly downloads and 74,934 GitHub stars make it one of the most battle-tested Python web frameworks.",
+          "Actively maintained: last commit was 1 day ago, the repo is not archived, and only 4 issues/PRs are open.",
+          "The latest release 3.1.3 is clear of all 10 historical OSV advisories, and it ships type information under a permissive BSD-3-Clause license.",
+          "One caveat: the >=3.0 floor includes versions with 2 known vulnerabilities, so constrain the requirement to >=3.1.3 rather than leaving the range open at 3.0.",
+          "Release cadence is slow (1 release in the last 12 months, 231 days since the last one), which is typical for a mature framework and not a red flag given the daily commit activity."
+        ],
+        "findings": [
+          {
+            "impact": "positive",
+            "message": "Latest version is clear of the 10 historical advisories",
+            "penalty": 0
+          },
+          {
+            "impact": "negative",
+            "message": "The floor of your range (>=3.0) has 2 known vulnerabilities — raise it to a patched version",
+            "penalty": 5
+          },
+          {
+            "impact": "positive",
+            "message": "Actively developed (commit in the last 30 days)",
+            "penalty": 0
+          },
+          {
+            "impact": "positive",
+            "message": "Widely used (38,225,189 weekly downloads)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [],
+        "signals": {
+          "dependency": {
+            "name": "flask",
+            "ecosystem": "pypi",
+            "requested": ">=3.0",
+            "kind": "prod"
+          },
+          "registry": {
+            "latestVersion": "3.1.3",
+            "registryUrl": "https://pypi.org/project/flask/",
+            "description": "A simple framework for building complex web applications.",
+            "license": "BSD-3-Clause",
+            "homepage": null,
+            "repositoryUrl": "https://github.com/pallets/flask/",
+            "createdAt": "2010-04-16T14:29:37.458396Z",
+            "lastReleaseAt": "2026-02-19T05:00:56.027585Z",
+            "totalVersions": 64,
+            "releasesLastYear": 1,
+            "deprecated": null,
+            "maintainersCount": null,
+            "dependenciesCount": 7,
+            "unpackedSizeBytes": null,
+            "hasTypes": true
+          },
+          "adoption": {
+            "weeklyDownloads": 38225189,
+            "totalDownloads": null,
+            "dependents": null,
+            "note": "last 7 days"
+          },
+          "repository": {
+            "fullName": "pallets/flask",
+            "url": "https://github.com/pallets/flask",
+            "description": "The Python micro framework for building web applications.",
+            "stars": 74934,
+            "forks": 17059,
+            "openIssues": 4,
+            "archived": false,
+            "lastCommitAt": "2026-10-07T14:02:54Z"
+          },
+          "vulnerabilities": {
+            "totalKnown": 10,
+            "vulnerabilities": [
+              {
+                "id": "GHSA-4grg-w6v8-c28g",
+                "summary": "Flask uses fallback key instead of current signing key",
+                "severity": "low",
+                "aliases": [
+                  "CVE-2025-47278",
+                  "PYSEC-2026-1377"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-4grg-w6v8-c28g",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-562c-5r94-xh97",
+                "summary": "Flask is vulnerable to Denial of Service via incorrect encoding of JSON data",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2018-1000656",
+                  "PYSEC-2018-66"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-562c-5r94-xh97",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-5wv5-4vpf-pj6m",
+                "summary": "Pallets Project Flask is vulnerable to Denial of Service via Unexpected memory usage",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2019-1010083",
+                  "PYSEC-2019-179"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-5wv5-4vpf-pj6m",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-68rp-wp8r-4726",
+                "summary": "Flask session does not add `Vary: Cookie` header when accessed in some ways",
+                "severity": "low",
+                "aliases": [
+                  "CVE-2026-27205",
+                  "PYSEC-2026-2151"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-68rp-wp8r-4726",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-m2qf-hxjv-5gpq",
+                "summary": "Flask vulnerable to possible disclosure of permanent session cookie due to missing Vary: Cookie header",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2023-30861",
+                  "PYSEC-2023-62"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-m2qf-hxjv-5gpq",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2018-66",
+                "summary": "The Pallets Project flask version Before 0.12.3 contains a CWE-20: Improper Input Validation vulnerability in flask that can result in Large amount of memory usage possibly leading to denial of servic",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2018-1000656",
+                  "GHSA-562c-5r94-xh97"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2018-66",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2019-179",
+                "summary": "The Pallets Project Flask before 1.0 is affected by: unexpected memory usage. The impact is: denial of service. The attack vector is: crafted encoded JSON data. The fixed version is: 1. NOTE: this may",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2019-1010083",
+                  "GHSA-5wv5-4vpf-pj6m"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2019-179",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2023-62",
+                "summary": "Flask is a lightweight WSGI web application framework. When all of the following conditions are met, a response containing data intended for one client may be cached and subsequently sent by the proxy",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2023-30861",
+                  "GHSA-m2qf-hxjv-5gpq"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2023-62",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2026-1377",
+                "summary": "Flask uses fallback key instead of current signing key",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2025-47278",
+                  "GHSA-4grg-w6v8-c28g"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2026-1377",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "PYSEC-2026-2151",
+                "summary": "Flask is a web server gateway interface (WSGI) web application framework. In versions 3.1.2 and below, when the session object is accessed, Flask should set the Vary: Cookie header., resulting in a Us",
+                "severity": "unknown",
+                "aliases": [
+                  "CVE-2026-27205",
+                  "GHSA-68rp-wp8r-4726"
+                ],
+                "url": "https://osv.dev/vulnerability/PYSEC-2026-2151",
+                "affectsLatest": false,
+                "affectsRequested": true
+              }
+            ],
+            "requestedVersion": "3.0",
+            "requestedPinned": false
+          },
+          "issues": []
+        },
+        "verdictSource": "jev",
+        "verdictConfidence": 0.85,
+        "explanationSource": "llm"
+      }
+    ],
+    "skipped": [],
+    "generatedAt": "2026-10-08T21:47:22.830095Z"
+  }
+}

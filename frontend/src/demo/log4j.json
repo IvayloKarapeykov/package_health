@@ -1,0 +1,271 @@
+{
+  "request": {
+    "mode": "package",
+    "ecosystem": "maven",
+    "package": "org.apache.logging.log4j:log4j-core:2.14.1"
+  },
+  "report": {
+    "ecosystem": "maven",
+    "manifest": null,
+    "overallVerdict": "caution",
+    "summary": "log4j-core is actively maintained and widely adopted, but the pinned 2.14.1 predates the December 2021 Log4Shell fixes and carries 7 known vulnerabilities, while the newest tagged release (3.0.0-beta3) is still a pre-GA beta. The library is fine to keep if you move to the latest stable 2.x release; staying on 2.14.1 is not.",
+    "counts": {
+      "recommended": 0,
+      "caution": 1,
+      "avoid": 0,
+      "unknown": 0
+    },
+    "assessments": [
+      {
+        "dependency": {
+          "name": "org.apache.logging.log4j:log4j-core",
+          "ecosystem": "maven",
+          "requested": "2.14.1",
+          "kind": "direct"
+        },
+        "verdict": "caution",
+        "score": 65,
+        "summary": "log4j-core is actively maintained and widely adopted, but the pinned 2.14.1 predates the December 2021 Log4Shell fixes and carries 7 known vulnerabilities, while the newest tagged release (3.0.0-beta3) is still a pre-GA beta. The library is fine to keep if you move to the latest stable 2.x release; staying on 2.14.1 is not.",
+        "reasons": [
+          "Your pinned 2.14.1 has 7 known vulnerabilities — it is the last release before the Log4Shell disclosure, so upgrading off this exact version is the single most important action here.",
+          "Even the latest release isn't clean: 3 moderate advisories still apply (silent log loss in XmlLayout, log injection in Rfc5424Layout, silently ignored TLS hostname verification), out of 11 known across all versions.",
+          "The newest version on Maven Central is 3.0.0-beta3, and only 5 releases shipped in the last 12 months — production should target the latest stable 2.x line, not the 3.x beta.",
+          "The project itself is healthy — last commit 1 day ago, 3,634 stars, 1,749 forks, 215 open issues/PRs, 239 dependent packages — which is why this is an upgrade-now situation rather than a walk-away one.",
+          "The rule score of 65 reflects that tension: strong ongoing maintenance pulling up, a vulnerable pinned version and a beta-only newest release pulling down."
+        ],
+        "findings": [
+          {
+            "impact": "negative",
+            "message": "3 moderate-severity vulnerabilities in the latest version",
+            "penalty": 30
+          },
+          {
+            "impact": "negative",
+            "message": "Your pinned version 2.14.1 has 7 known vulnerabilities — upgrade",
+            "penalty": 5
+          },
+          {
+            "impact": "positive",
+            "message": "5 releases in the last 12 months",
+            "penalty": 0
+          },
+          {
+            "impact": "positive",
+            "message": "Actively developed (commit in the last 30 days)",
+            "penalty": 0
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "ch.qos.logback:logback-classic",
+            "reason": "Mature, actively maintained SLF4J backend that is the de facto default in Spring Boot, without log4j-core's RCE-class CVE history.",
+            "url": "https://central.sonatype.com/artifact/ch.qos.logback/logback-classic",
+            "adoption": {
+              "weeklyDownloads": null,
+              "totalDownloads": null,
+              "dependents": 233,
+              "note": "packages on Maven Central that depend on it"
+            }
+          },
+          {
+            "name": "org.tinylog:tinylog",
+            "reason": "Lightweight, actively maintained logging framework with a small footprint and a simple fluent API.",
+            "url": "https://central.sonatype.com/artifact/org.tinylog/tinylog",
+            "adoption": {
+              "weeklyDownloads": null,
+              "totalDownloads": null,
+              "dependents": 89,
+              "note": "packages on Maven Central that depend on it"
+            }
+          },
+          {
+            "name": "org.slf4j:slf4j-api",
+            "reason": "Coding against the SLF4J API keeps the backend swappable, so you can move off log4j-core later without touching call sites.",
+            "url": "https://central.sonatype.com/artifact/org.slf4j/slf4j-api",
+            "adoption": {
+              "weeklyDownloads": null,
+              "totalDownloads": null,
+              "dependents": 1704,
+              "note": "packages on Maven Central that depend on it"
+            }
+          }
+        ],
+        "signals": {
+          "dependency": {
+            "name": "org.apache.logging.log4j:log4j-core",
+            "ecosystem": "maven",
+            "requested": "2.14.1",
+            "kind": "direct"
+          },
+          "registry": {
+            "latestVersion": "3.0.0-beta3",
+            "registryUrl": "https://central.sonatype.com/artifact/org.apache.logging.log4j/log4j-core",
+            "description": null,
+            "license": "Apache-2.0",
+            "homepage": "https://logging.apache.org/log4j/3.x/",
+            "repositoryUrl": "https://github.com/apache/logging-log4j2",
+            "createdAt": "2012-07-29T19:13:04Z",
+            "lastReleaseAt": "2026-07-01T10:49:54Z",
+            "totalVersions": 78,
+            "releasesLastYear": 5,
+            "deprecated": null,
+            "maintainersCount": null,
+            "dependenciesCount": null,
+            "unpackedSizeBytes": null,
+            "hasTypes": null
+          },
+          "adoption": {
+            "weeklyDownloads": null,
+            "totalDownloads": null,
+            "dependents": 239,
+            "note": "packages on Maven Central that depend on it"
+          },
+          "repository": {
+            "fullName": "apache/logging-log4j2",
+            "url": "https://github.com/apache/logging-log4j2",
+            "description": "Apache Log4j is a versatile, feature-rich, efficient logging API and backend for Java.",
+            "stars": 3634,
+            "forks": 1749,
+            "openIssues": 215,
+            "archived": false,
+            "lastCommitAt": "2026-10-07T07:59:14Z"
+          },
+          "vulnerabilities": {
+            "totalKnown": 11,
+            "vulnerabilities": [
+              {
+                "id": "GHSA-3pxv-7cmr-fjr4",
+                "summary": "Apache Log4j Core: Silent log event loss in XmlLayout due to unescaped XML 1.0 forbidden characters",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2026-34480"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-3pxv-7cmr-fjr4",
+                "affectsLatest": true,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-445c-vh5m-36rj",
+                "summary": "Apache Log4j Core: log injection in `Rfc5424Layout` due to silent configuration incompatibility",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2026-34478"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-445c-vh5m-36rj",
+                "affectsLatest": true,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-6hg6-v5c8-fphq",
+                "summary": "Apache Log4j Core: `verifyHostName` attribute silently ignored in TLS configuration",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2026-34477"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-6hg6-v5c8-fphq",
+                "affectsLatest": true,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-7rjr-3q55-vv33",
+                "summary": "Incomplete fix for Apache Log4j vulnerability",
+                "severity": "critical",
+                "aliases": [
+                  "CVE-2021-45046"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-7rjr-3q55-vv33",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-8489-44mv-ggj8",
+                "summary": "Improper Input Validation and Injection in Apache Log4j2",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2021-44832"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-8489-44mv-ggj8",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-fxph-q3j8-mv87",
+                "summary": "Deserialization of Untrusted Data in Log4j",
+                "severity": "critical",
+                "aliases": [
+                  "CVE-2017-5645"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-fxph-q3j8-mv87",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-jfh8-c2jp-5v3q",
+                "summary": "Remote code injection in Log4j",
+                "severity": "critical",
+                "aliases": [
+                  "CVE-2021-44228"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-jfh8-c2jp-5v3q",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-p6xc-xr62-6r2g",
+                "summary": "Apache Log4j2 vulnerable to Improper Input Validation and Uncontrolled Recursion",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2021-45105"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-p6xc-xr62-6r2g",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-vc5p-v9hr-52mj",
+                "summary": "Apache Log4j does not verify the TLS hostname in its Socket Appender",
+                "severity": "moderate",
+                "aliases": [
+                  "CVE-2025-68161"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-vc5p-v9hr-52mj",
+                "affectsLatest": false,
+                "affectsRequested": true
+              },
+              {
+                "id": "GHSA-vp98-w2p3-mv35",
+                "summary": "Apache Log4j 1.x (EOL) allows Denial of Service (DoS)",
+                "severity": "high",
+                "aliases": [
+                  "CVE-2023-26464"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-vp98-w2p3-mv35",
+                "affectsLatest": false,
+                "affectsRequested": false
+              },
+              {
+                "id": "GHSA-vwqq-5vrc-xw9h",
+                "summary": "Improper validation of certificate with host mismatch in Apache Log4j SMTP appender",
+                "severity": "low",
+                "aliases": [
+                  "CVE-2020-9488"
+                ],
+                "url": "https://osv.dev/vulnerability/GHSA-vwqq-5vrc-xw9h",
+                "affectsLatest": false,
+                "affectsRequested": false
+              }
+            ],
+            "requestedVersion": "2.14.1",
+            "requestedPinned": true
+          },
+          "issues": []
+        },
+        "verdictSource": "jev",
+        "verdictConfidence": 0.88,
+        "explanationSource": "llm"
+      }
+    ],
+    "skipped": [],
+    "generatedAt": "2026-10-08T21:47:52.789556Z"
+  }
+}
