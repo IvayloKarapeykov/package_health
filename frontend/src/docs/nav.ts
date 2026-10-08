@@ -49,6 +49,14 @@ const SECTIONS: { title: string; pages: Omit<DocPage, "section" | "Content">[] }
       { slug: "mcp-tools", title: "Tools reference", description: "Parameters and results of each tool." },
     ],
   },
+  {
+    title: "API",
+    pages: [
+      { slug: "api-overview", title: "Overview", description: "Base URL, endpoints, keys, request IDs and errors." },
+      { slug: "api-analyze", title: "Analyze", description: "Check a package or a dependency file and get the full report." },
+      { slug: "api-stream", title: "Streaming", description: "Follow an analysis as it runs, with Server-Sent Events." },
+    ],
+  },
 ]
 
 export const DOC_SECTIONS = SECTIONS.map((section) => ({

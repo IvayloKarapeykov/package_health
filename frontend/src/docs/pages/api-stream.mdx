@@ -1,0 +1,71 @@
+`POST /api/analyze/stream` takes the same body as [Analyze](/docs/api-analyze#request), but sends
+progress as [Server-Sent Events](https://developer.mozilla.org/docs/Web/API/Server-sent_events)
+while packages are checked in parallel. The web app uses it to show each package as it finishes.
+
+## Events
+
+Each event has a name and a JSON payload. They arrive in this order:
+
+| Event | Payload | Sent |
+| --- | --- | --- |
+| `plan` | `ecosystem`, `manifest`, `dependencies` to check, `skipped`, and `detection` for an auto-detected package | Once, first |
+| `progress` | `dependencyKey` like `npm:express`, and the `step` it moved to | As each package moves through its steps |
+| `assessment` | One finished package, in the same shape as the report's `assessments` | Once per package |
+| `report` | The full report, the same as [Analyze](/docs/api-analyze#response) returns | Once, last |
+| `error` | `kind` (`invalid_input` or `internal`), `message` and `requestId` | Instead of a report, if it fails |
+
+The `step` values, in order, are `registry`, `activity`, `scoring`, `deciding`, `explaining` and
+`alternatives`.
+
+The server also sends a comment line every 5 seconds to keep the connection alive. If nothing
+arrives for 15 seconds, treat the connection as lost.
+
+## Example
+
+<CodeTabs>
+
+```bash title="curl"
+curl -N -X POST https://api.vet.ivaylokarapeykov.com/api/analyze/stream \
+  -H "Content-Type: application/json" \
+  -d '{"mode": "package", "package": "left-pad"}'
+```
+
+```python title="Python"
+import json
+
+import httpx
+
+body = {"mode": "package", "package": "left-pad"}
+with httpx.stream("POST", "https://api.vet.ivaylokarapeykov.com/api/analyze/stream", json=body, timeout=None) as response:
+    event = None
+    for line in response.iter_lines():
+        if line.startswith("event:"):
+            event = line.removeprefix("event:").strip()
+        elif line.startswith("data:") and event == "assessment":
+            assessment = json.loads(line.removeprefix("data:"))["assessment"]
+            print(assessment["dependency"]["name"], assessment["verdict"])
+        elif line.startswith("data:") and event == "report":
+            print("overall:", json.loads(line.removeprefix("data:"))["report"]["overallVerdict"])
+```
+
+</CodeTabs>
+
+```text title="output (shortened)"
+event: plan
+data: {"type":"plan","ecosystem":"npm","dependencies":[{"name":"left-pad",...}],...}
+
+event: progress
+data: {"type":"progress","dependencyKey":"npm:left-pad","step":"registry"}
+
+event: assessment
+data: {"type":"assessment","assessment":{"verdict":"avoid",...}}
+
+event: report
+data: {"type":"report","report":{"overallVerdict":"avoid",...}}
+```
+
+<Note>
+  Browsers' `EventSource` only supports GET, so read the stream with `fetch` and parse the lines,
+  as above. The web app's parser is in
+  [`frontend/src/api/sse.ts`](https://github.com/IvayloKarapeykov/package_health/blob/main/frontend/src/api/sse.ts).
+</Note>

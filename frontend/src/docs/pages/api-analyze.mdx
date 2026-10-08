@@ -1,0 +1,91 @@
+`POST /api/analyze` checks one package or a dependency file and returns the report when it's done.
+
+## Request
+
+The body is one of two shapes, chosen by `mode`.
+
+### One package
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `mode` | `"package"` | |
+| `package` | string, required | Name, optionally with a version. Up to 256 characters |
+| `ecosystem` | string | `auto` (default), `npm`, `pypi`, `maven`, `nuget`, `go`, `cargo`, `rubygems` or `packagist` |
+
+### A dependency file
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `mode` | `"manifest"` | |
+| `content` | string, required | The file's full text. Up to 500,000 characters |
+| `filename` | string | The file's name, if known. Otherwise the format is detected |
+| `includeDev` | boolean | Also check development dependencies. Defaults to `true` |
+
+## Example
+
+<CodeTabs>
+
+```bash title="curl"
+curl -X POST https://api.vet.ivaylokarapeykov.com/api/analyze \
+  -H "Content-Type: application/json" \
+  -H "X-GitHub-Token: $GITHUB_TOKEN" \
+  -d '{"mode": "package", "package": "express"}'
+```
+
+```js title="JavaScript"
+const response = await fetch("https://api.vet.ivaylokarapeykov.com/api/analyze", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "X-GitHub-Token": process.env.GITHUB_TOKEN },
+  body: JSON.stringify({ mode: "package", package: "express" }),
+})
+const report = await response.json()
+console.log(report.overallVerdict)
+```
+
+```python title="Python"
+import os
+
+import httpx
+
+report = httpx.post(
+    "https://api.vet.ivaylokarapeykov.com/api/analyze",
+    json={"mode": "package", "package": "express"},
+    headers={"X-GitHub-Token": os.environ["GITHUB_TOKEN"]},
+    timeout=120,
+).json()
+print(report["overallVerdict"])
+```
+
+</CodeTabs>
+
+## Response
+
+| Field | Description |
+| --- | --- |
+| `ecosystem` | The registry that was checked |
+| `manifest` | The detected file format, like `pyproject.toml`, or `null` for one package |
+| `overallVerdict` | The worst verdict among the packages |
+| `summary` | One paragraph on the whole report |
+| `counts` | How many packages got each verdict |
+| `assessments` | One entry per package, worst first, with its verdict, score, reasons, alternatives and raw signals |
+| `skipped` | Dependencies that weren't checked, each with a reason |
+
+<Note>
+  A large file with an OpenRouter key can take a minute or more, since an LLM writes every
+  explanation. Give your client a generous timeout, or use [streaming](/docs/api-stream) to show
+  progress.
+</Note>
+
+## Use it in CI
+
+Fail a build when any dependency should be avoided. This uses `jq` to build the request:
+
+```bash title="check-dependencies.sh"
+verdict=$(jq -n --rawfile content package.json '{mode: "manifest", filename: "package.json", content: $content}' |
+  curl -s -X POST https://api.vet.ivaylokarapeykov.com/api/analyze \
+    -H "Content-Type: application/json" -H "X-GitHub-Token: $GITHUB_TOKEN" -d @- |
+  jq -r .overallVerdict)
+
+echo "Overall verdict: $verdict"
+[ "$verdict" != "avoid" ]
+```
