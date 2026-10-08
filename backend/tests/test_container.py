@@ -49,3 +49,13 @@ async def test_keyless_requests_share_a_runner_and_keyed_requests_get_their_own(
         assert runners(Credentials()) is runners(Credentials.from_raw("", " "))
         assert runners(keyed) is not runners(keyed)
         assert runners(keyed) is not runners(Credentials())
+
+
+def test_empty_keys_in_env_files_count_as_unset(tmp_path, monkeypatch) -> None:
+    env_file = tmp_path / ".env"
+    env_file.write_text("OPENROUTER_API_KEY=\nGITHUB_TOKEN=\n")
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setenv("GITHUB_TOKEN", "")
+    loaded = Settings(_env_file=env_file)  # type: ignore[call-arg]
+    assert loaded.openrouter_api_key is None
+    assert loaded.github_token is None
