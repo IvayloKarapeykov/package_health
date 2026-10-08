@@ -24,7 +24,11 @@ def parse_github_repository(url: str | None) -> tuple[str, str] | None:
     match = _GITHUB_REPO_PATTERN.search(url) or _SHORTHAND_PATTERN.match(url)
     if not match:
         return None
-    return match.group("owner"), match.group("repo")
+    owner, repo = match.group("owner"), match.group("repo")
+    # Dot segments would turn the API path into another GitHub endpoint.
+    if {owner, repo} & {".", ".."}:
+        return None
+    return owner, repo
 
 
 class GitHubClient:

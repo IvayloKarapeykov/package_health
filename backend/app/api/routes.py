@@ -30,7 +30,10 @@ def get_credentials(
         str | None, Header(alias=OPENROUTER_KEY_HEADER, description="OpenRouter key: AI verdicts and explanations")
     ] = None,
 ) -> Credentials:
-    return Credentials.from_raw(github_token, openrouter_key)
+    try:
+        return Credentials.from_raw(github_token, openrouter_key)
+    except InvalidInputError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 def get_runner(request: Request, credentials: Annotated[Credentials, Depends(get_credentials)]) -> AnalysisRunner:

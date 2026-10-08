@@ -6,6 +6,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import datetime
 
+from app.core.text import shorten
 from app.core.time import days_since, utc_now
 from app.domain.models import Adoption, Finding, HealthScore, PackageSignals, Severity, Verdict
 
@@ -53,7 +54,7 @@ def _plural(count: int, singular: str, plural: str) -> str:
 
 def deprecation_rule(signals: PackageSignals, policy: ScoringPolicy, now: datetime) -> Iterable[Finding]:
     if signals.registry and signals.registry.deprecated:
-        yield _critical(f"Deprecated: “{signals.registry.deprecated}”", 60)
+        yield _critical(f"Deprecated: “{shorten(signals.registry.deprecated, 200)}”", 60)
 
 
 def archived_rule(signals: PackageSignals, policy: ScoringPolicy, now: datetime) -> Iterable[Finding]:
