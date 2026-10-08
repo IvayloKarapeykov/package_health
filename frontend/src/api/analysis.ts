@@ -61,6 +61,7 @@ export async function* streamAnalysis(
 function classifyStatus(status: number): FailureKind {
   if (UNREACHABLE_STATUSES.has(status)) return "unreachable"
   if (status === 400 || status === 422) return "invalid"
+  if (status === 429) return "limited"
   return "server"
 }
 

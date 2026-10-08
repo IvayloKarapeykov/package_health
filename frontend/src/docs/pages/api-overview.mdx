@@ -31,12 +31,20 @@ Send your own keys as headers. Both are optional, and they're used for that requ
 Every response has an `X-Request-ID` header. Send your own (letters, digits, `.`, `_` or `-`, up to
 64 characters) and it's kept, so your logs and ours line up. Quote it when you report a problem.
 
+## Limits
+
+To keep the public server free, each client can start 30 analyses per 10 minutes, and only a few
+analyses run at once across everyone. MCP tool calls count toward the same limit. Over it, you get a
+`429` with a `Retry-After` header. [Run your own server](/docs/self-host-run) for higher limits.
+
 ## Errors
 
 | Status | When |
 | --- | --- |
 | `422` with a message | The input can't be checked, like an invalid package name or an unreadable file |
 | `422` with a list | The request body doesn't match either shape |
+| `413` | The request body is over 2 MB |
+| `429` | You started too many analyses recently, or too many are running right now. Wait for `Retry-After` seconds |
 | `500` | Something failed on our side. Quote the request ID |
 
 ```json title="422"

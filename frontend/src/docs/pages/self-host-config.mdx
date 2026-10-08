@@ -32,6 +32,10 @@ optional.
 | `MAX_CONCURRENCY` | `8` | Packages checked at the same time |
 | `HTTP_TIMEOUT_SECONDS` | `20` | Timeout for each call to a registry, GitHub or OSV.dev |
 | `CACHE_TTL_SECONDS` | `900` | How long registry and GitHub answers are reused |
+| `RATE_LIMIT_ANALYSES` | `30` | Analyses one client can start per window, over the API and MCP |
+| `RATE_LIMIT_WINDOW_SECONDS` | `600` | The window for `RATE_LIMIT_ANALYSES` |
+| `MAX_ACTIVE_ANALYSES` | `6` | Analyses running at once across everyone. More are asked to try again |
+| `MAX_REQUEST_BYTES` | `2000000` | Larger request bodies are refused |
 
 ## Server
 
@@ -59,3 +63,7 @@ Lists are written as JSON, for example `CORS_ORIGINS=["https://example.com"]`.
 | Variable | Description |
 | --- | --- |
 | `VITE_API_BASE_URL` | The backend's address, when it's on another domain, e.g. `https://api.example.com` |
+
+`frontend/vercel.json` also sets security headers. Its Content-Security-Policy only lets the page
+connect to its own domain and `https://api.vet.ivaylokarapeykov.com`, so change `connect-src` to your
+backend's address if you host the frontend yourself.

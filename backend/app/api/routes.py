@@ -3,8 +3,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request
 from sse_starlette import EventSourceResponse, ServerSentEvent
+from starlette.background import BackgroundTask
 
 from app.agent.runner import AnalysisRunner
+from app.api.limits import AnalysisLease, LimitExceeded, client_ip
 from app.core.config import Settings, get_settings
 from app.domain.credentials import GITHUB_TOKEN_HEADER, OPENROUTER_KEY_HEADER, Credentials
 from app.domain.ecosystems import ECOSYSTEMS
@@ -28,11 +30,22 @@ def get_credentials(
         str | None, Header(alias=OPENROUTER_KEY_HEADER, description="OpenRouter key: AI verdicts and explanations")
     ] = None,
 ) -> Credentials:
-    return Credentials.from_raw(github_token, openrouter_key)
+    try:
+        return Credentials.from_raw(github_token, openrouter_key)
+    except InvalidInputError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 def get_runner(request: Request, credentials: Annotated[Credentials, Depends(get_credentials)]) -> AnalysisRunner:
     return request.app.state.runners(credentials)
+
+
+def admit(request: Request) -> AnalysisLease:
+    client = client_ip(request.headers, request.client.host if request.client else None)
+    try:
+        return request.app.state.limits.acquire(client)
+    except LimitExceeded as exc:
+        raise HTTPException(status_code=429, detail=exc.message, headers={"Retry-After": str(exc.retry_after)}) from exc
 
 
 Runner = Annotated[AnalysisRunner, Depends(get_runner)]
@@ -66,17 +79,24 @@ async def ecosystems() -> list[dict[str, object]]:
 
 
 @router.post("/analyze", response_model=AnalysisReport)
-async def analyze(body: RequestBody, runner: Runner) -> AnalysisReport:
-    try:
-        return await runner.run(body)
-    except InvalidInputError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
+async def analyze(body: RequestBody, runner: Runner, request: Request) -> AnalysisReport:
+    with admit(request):
+        try:
+            return await runner.run(body)
+        except InvalidInputError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @router.post("/analyze/stream")
-async def analyze_stream(body: RequestBody, runner: Runner) -> EventSourceResponse:
-    async def events() -> AsyncIterator[ServerSentEvent]:
-        async for event in runner.stream(body):
-            yield ServerSentEvent(event=event.type, data=event.model_dump_json())
+async def analyze_stream(body: RequestBody, runner: Runner, request: Request) -> EventSourceResponse:
+    lease = admit(request)
 
-    return EventSourceResponse(events(), ping=SSE_PING_SECONDS)
+    async def events() -> AsyncIterator[ServerSentEvent]:
+        try:
+            async for event in runner.stream(body):
+                yield ServerSentEvent(event=event.type, data=event.model_dump_json())
+        finally:
+            lease.release()
+
+    # The background task covers a stream that never starts; release() only counts once.
+    return EventSourceResponse(events(), ping=SSE_PING_SECONDS, background=BackgroundTask(lease.release))

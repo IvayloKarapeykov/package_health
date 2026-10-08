@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mcp.server.transport_security import TransportSecuritySettings
 
+from app.api.limits import AnalysisLimits, BodySizeLimitMiddleware
 from app.api.middleware import REQUEST_ID_HEADER, RequestContextMiddleware
 from app.api.routes import router
 from app.container import RunnerFactory
@@ -29,6 +30,13 @@ def create_app() -> FastAPI:
     configure_tracing(settings)  # before any graph runs: LangSmith reads its settings once
 
     app = FastAPI(title="Package Health Advisor", lifespan=lifespan)
+    app.state.limits = AnalysisLimits(
+        max_per_client=settings.rate_limit_analyses,
+        window_seconds=settings.rate_limit_window_seconds,
+        max_active=settings.max_active_analyses,
+    )
+    # Innermost, so its 413s still get CORS headers and a request ID.
+    app.add_middleware(BodySizeLimitMiddleware, max_bytes=settings.max_request_bytes)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
@@ -41,7 +49,7 @@ def create_app() -> FastAPI:
     app.include_router(router)
 
     # Resolves the runner per call, so tools see the one the lifespan builds.
-    app.state.mcp = build_mcp_server(lambda credentials: app.state.runners(credentials))
+    app.state.mcp = build_mcp_server(lambda credentials: app.state.runners(credentials), lambda: app.state.limits)
     mcp_app = app.state.mcp.streamable_http_app(
         streamable_http_path="/mcp",
         stateless_http=True,

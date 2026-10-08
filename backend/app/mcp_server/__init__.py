@@ -1,6 +1,7 @@
 """MCP tools for agents. Served over HTTP at /mcp by the API, or over stdio by `python -m app.mcp_server`."""
 
 from collections.abc import Callable
+from contextlib import AbstractContextManager, nullcontext
 from typing import Annotated
 
 from mcp.server.mcpserver import Context, MCPServer
@@ -9,6 +10,7 @@ from mcp_types import ToolAnnotations
 from pydantic import Field, ValidationError
 
 from app.agent.runner import AnalysisRunner
+from app.api.limits import AnalysisLimits, LimitExceeded, client_ip
 from app.domain.credentials import Credentials
 from app.domain.errors import InvalidInputError
 from app.domain.models import AnalysisReport
@@ -24,16 +26,29 @@ INSTRUCTIONS = (
 READ_ONLY = ToolAnnotations(read_only_hint=True, idempotent_hint=True, open_world_hint=True)
 
 
-def build_mcp_server(runners: Callable[[Credentials], AnalysisRunner]) -> MCPServer:
+def build_mcp_server(
+    runners: Callable[[Credentials], AnalysisRunner], limits: Callable[[], AnalysisLimits] | None = None
+) -> MCPServer:
     server = MCPServer("package-health", title="Package Health", instructions=INSTRUCTIONS)
 
     async def analyze(ctx: Context, request: Callable[[], PackageRequest | ManifestRequest]) -> AnalysisReport:
         # Over HTTP the caller's keys arrive as headers; over stdio there are none and `.env` applies.
-        credentials = Credentials.from_headers(ctx.headers or {})
         try:
-            return await runners(credentials).run(request())
+            credentials = Credentials.from_headers(ctx.headers or {})
+            with admit(ctx):
+                return await runners(credentials).run(request())
+        except LimitExceeded as exc:
+            raise ToolError(exc.message) from exc
         except (InvalidInputError, ValidationError) as exc:
             raise ToolError(str(exc)) from exc
+
+    def admit(ctx: Context) -> AbstractContextManager[object]:
+        # Over stdio there's no HTTP request and no one else to share the server with.
+        http_request = getattr(ctx.request_context, "request", None)
+        if limits is None or http_request is None:
+            return nullcontext()
+        peer = http_request.client.host if http_request.client else None
+        return limits().acquire(client_ip(http_request.headers, peer))
 
     @server.tool(annotations=READ_ONLY)
     async def check_package(
