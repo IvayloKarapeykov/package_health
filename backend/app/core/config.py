@@ -6,7 +6,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    # Empty values, like the blank keys in .env.example, mean "not set" rather than an empty key.
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore", env_ignore_empty=True)
 
     # LLM (OpenRouter, OpenAI-compatible API)
     openrouter_api_key: SecretStr | None = None
@@ -14,9 +15,7 @@ class Settings(BaseSettings):
     llm_model: str = "z-ai/glm-5.3-flash"
     llm_temperature: float = 0.2
     llm_timeout_seconds: float = 60.0
-    llm_structured_output_method: Literal["function_calling", "json_schema", "json_mode"] = (
-        "function_calling"
-    )
+    llm_structured_output_method: Literal["function_calling", "json_schema", "json_mode"] = "function_calling"
 
     # Verdicts from Jev (TypeSafe's decision model) via OpenRouter's Decisions API
     use_jev_verdicts: bool = True
