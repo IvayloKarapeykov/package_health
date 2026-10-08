@@ -203,6 +203,10 @@ The scoring, the agent and the UI work with it as is.
 Package Health is free and always will be. If it saved you some time, you can
 [buy me a coffee](https://buymeacoffee.com/ipkd3v).
 
+## Security
+
+Found a vulnerability? Please report it privately; see [SECURITY.md](SECURITY.md).
+
 ## License
 
 [MIT](LICENSE)
