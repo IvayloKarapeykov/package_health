@@ -33,6 +33,13 @@ const FAILURE_COPY: Record<FailureKind, FailureCopy> = {
     showMessage: true,
     showReference: false,
   },
+  limited: {
+    title: "Give it a moment",
+    description: "There's a limit on how many checks can run, which keeps the site free for everyone.",
+    retryable: true,
+    showMessage: true,
+    showReference: false,
+  },
   server: {
     title: "The analysis hit a snag",
     description: "Something went wrong while checking the packages. It's usually temporary.",

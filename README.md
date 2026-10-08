@@ -161,6 +161,9 @@ All settings live in `backend/.env`; see [`.env.example`](backend/.env.example).
 | `USE_JEV_VERDICTS` | `true` | `false` lets the rules decide instead of Jev |
 | `MAX_PACKAGES` | `40` | Most dependencies analyzed per file |
 | `MAX_CONCURRENCY` | `8` | Packages analyzed in parallel |
+| `RATE_LIMIT_ANALYSES` / `RATE_LIMIT_WINDOW_SECONDS` | `30` / `600` | Analyses one client can start per window, over the API and MCP |
+| `MAX_ACTIVE_ANALYSES` | `6` | Analyses running at once across all clients; more get a `429` |
+| `MAX_REQUEST_BYTES` | `2000000` | Larger request bodies get a `413` |
 | `MCP_ALLOWED_HOSTS` | `["localhost:*", "127.0.0.1:*", "[::1]:*"]` | Host names the MCP endpoint accepts; add your domain when you deploy |
 | `LOG_FORMAT` | `text` | `json` for log aggregators |
 | `LANGSMITH_TRACING` | `false` | Trace runs in [LangSmith](https://smith.langchain.com) (needs `LANGSMITH_API_KEY`) |

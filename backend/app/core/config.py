@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     max_packages: int = 40
     max_concurrency: int = 8
 
+    # Abuse limits for the API and the MCP endpoint
+    rate_limit_analyses: int = 30  # per client, per window
+    rate_limit_window_seconds: int = 600
+    max_active_analyses: int = 6  # across all clients; more get a "busy" answer
+    max_request_bytes: int = 2_000_000
+
     # HTTP server
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     # Host headers the MCP endpoint answers to (DNS rebinding protection). Add the public domain when deployed.

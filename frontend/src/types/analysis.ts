@@ -140,7 +140,7 @@ export interface AnalysisReport {
 }
 
 /** Why an analysis couldn't finish, from the user's point of view. */
-export type FailureKind = "unreachable" | "invalid" | "server"
+export type FailureKind = "unreachable" | "invalid" | "limited" | "server"
 
 export interface AnalysisFailure {
   kind: FailureKind
