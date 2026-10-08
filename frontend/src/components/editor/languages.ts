@@ -4,7 +4,9 @@ import type { Extension } from "@codemirror/state"
 
 import type { Syntax } from "@/lib/manifestFormat"
 
-const LOADERS: Record<Syntax, () => Promise<Extension>> = {
+export type CodeLanguage = Syntax | "shell"
+
+const LOADERS: Record<CodeLanguage, () => Promise<Extension>> = {
   json: () => import("@codemirror/lang-json").then((m) => m.json()),
   xml: () => import("@codemirror/lang-xml").then((m) => m.xml()),
   yaml: () => import("@codemirror/lang-yaml").then((m) => m.yaml()),
@@ -14,11 +16,12 @@ const LOADERS: Record<Syntax, () => Promise<Extension>> = {
   kotlin: () => import("@codemirror/legacy-modes/mode/clike").then((m) => StreamLanguage.define(m.kotlin)),
   gomod: async () => StreamLanguage.define(goMod),
   requirements: async () => StreamLanguage.define(requirements),
+  shell: () => import("@codemirror/legacy-modes/mode/shell").then((m) => StreamLanguage.define(m.shell)),
 }
 
-const loaded = new Map<Syntax, Promise<Extension>>()
+const loaded = new Map<CodeLanguage, Promise<Extension>>()
 
-export function loadLanguage(syntax: Syntax): Promise<Extension> {
+export function loadLanguage(syntax: CodeLanguage): Promise<Extension> {
   let language = loaded.get(syntax)
   if (!language) {
     language = LOADERS[syntax]()
