@@ -1,0 +1,65 @@
+Run the server on your own machine and your keys never leave it. Your agent starts it over stdio
+when it needs it.
+
+## Set it up
+
+<Steps>
+
+### Get the code
+
+```bash
+git clone https://github.com/IvayloKarapeykov/package_health.git
+cd package_health/backend
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+```
+
+You need Python 3.12 or newer.
+
+### Add it to your agent
+
+Point your client at the virtual environment's Python and pass your keys as environment
+variables. Replace `/path/to` with where you cloned the repo.
+
+```json title="mcp.json"
+{
+  "mcpServers": {
+    "package-health": {
+      "command": "/path/to/package_health/backend/.venv/bin/python",
+      "args": ["-m", "app.mcp_server"],
+      "env": {
+        "PYTHONPATH": "/path/to/package_health/backend",
+        "GITHUB_TOKEN": "github_pat_..."
+      }
+    }
+  }
+}
+```
+
+### Check it works
+
+Ask your agent to check a package. The first call takes a moment while the server starts.
+
+</Steps>
+
+## Environment variables
+
+| Variable | Effect |
+| --- | --- |
+| `GITHUB_TOKEN` | Your own GitHub rate limit |
+| `OPENROUTER_API_KEY` | Verdicts from Jev and reasons written by an LLM |
+
+The server also reads `backend/.env` if it's started from the `backend` folder. Every setting is
+listed in [`.env.example`](https://github.com/IvayloKarapeykov/package_health/blob/main/backend/.env.example).
+
+## Over HTTP instead
+
+To share one local server between several clients, start the API and use its `/mcp` endpoint:
+
+```bash
+.venv/bin/uvicorn app.main:app --port 8000
+```
+
+```text title="MCP endpoint"
+http://localhost:8000/mcp
+```

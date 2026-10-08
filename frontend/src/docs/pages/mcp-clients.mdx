@@ -1,0 +1,61 @@
+Every client needs the same two things: the endpoint URL and, optionally, your keys as headers.
+
+```text title="MCP endpoint"
+https://api.vet.ivaylokarapeykov.com/mcp
+```
+
+## Claude Code
+
+```bash
+claude mcp add --transport http --scope user package-health \
+  https://api.vet.ivaylokarapeykov.com/mcp \
+  --header "X-GitHub-Token: github_pat_..."
+```
+
+`--scope user` makes it available in every project. Leave it out to add it to the current project only.
+
+## Cursor
+
+Add it to `~/.cursor/mcp.json` for every project, or to `.cursor/mcp.json` in one project.
+
+```json title="~/.cursor/mcp.json"
+{
+  "mcpServers": {
+    "package-health": {
+      "url": "https://api.vet.ivaylokarapeykov.com/mcp",
+      "headers": { "X-GitHub-Token": "github_pat_..." }
+    }
+  }
+}
+```
+
+<Warning>
+  Don't commit a project-level file that contains your token. Use the global file instead.
+</Warning>
+
+## VS Code
+
+VS Code can ask for your token when the server starts, so it never sits in the file:
+
+```json title=".vscode/mcp.json"
+{
+  "inputs": [
+    { "type": "promptString", "id": "github-token", "description": "GitHub token", "password": true }
+  ],
+  "servers": {
+    "package-health": {
+      "type": "http",
+      "url": "https://api.vet.ivaylokarapeykov.com/mcp",
+      "headers": { "X-GitHub-Token": "${input:github-token}" }
+    }
+  }
+}
+```
+
+## Other clients
+
+Any client that supports the streamable HTTP transport works. Give it the endpoint URL, and add
+`X-GitHub-Token` or `X-OpenRouter-Key` headers if it lets you set headers.
+
+If your client only supports local servers, or you'd rather not send keys anywhere, [run it
+locally](/docs/mcp-local).

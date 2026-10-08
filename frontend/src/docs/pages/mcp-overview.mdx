@@ -1,0 +1,44 @@
+Coding agents add dependencies all the time, often from memory. Package Health is also an
+[MCP](https://modelcontextprotocol.io) server, so your agent can check a package before it lands in
+your project.
+
+## The endpoint
+
+```text title="MCP endpoint"
+https://api.vet.ivaylokarapeykov.com/mcp
+```
+
+It uses the streamable HTTP transport and needs no account. To set it up, see
+[Connect your agent](/docs/mcp-clients).
+
+## Tools
+
+| Tool | Use it for |
+| --- | --- |
+| `check_package` | One package, like `express` or `requests>=2.31` |
+| `check_dependencies` | Every dependency in a file's contents |
+
+Both are read-only. They return the same report as the [web app](/app): a verdict per package, the
+score, reasons, vulnerabilities and alternatives. See the [Tools reference](/docs/mcp-tools).
+
+## Your keys
+
+Send keys as HTTP headers in your client's MCP config. Both are optional.
+
+| Header | Effect |
+| --- | --- |
+| `X-GitHub-Token` | Your own 5,000 GitHub requests an hour instead of a shared 60 |
+| `X-OpenRouter-Key` | Verdicts from Jev and reasons written by an LLM |
+
+<Tip>
+  You can leave out the OpenRouter key. Your agent is already an LLM, so it can explain the verdict
+  itself, and checks come back in a second or two instead of up to a minute.
+</Tip>
+
+## Try it
+
+Once it's connected, just ask:
+
+```text title="prompt"
+Is it safe to add moment to this project? If not, what should I use instead?
+```

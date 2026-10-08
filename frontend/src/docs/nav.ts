@@ -40,6 +40,15 @@ const SECTIONS: { title: string; pages: Omit<DocPage, "section" | "Content">[] }
       { slug: "your-keys", title: "Your keys", description: "Use your own GitHub and OpenRouter keys, safely." },
     ],
   },
+  {
+    title: "AI agents (MCP)",
+    pages: [
+      { slug: "mcp-overview", title: "Overview", description: "Let your coding agent check packages before installing them." },
+      { slug: "mcp-clients", title: "Connect your agent", description: "Setup for Claude Code, Cursor, VS Code and other clients." },
+      { slug: "mcp-local", title: "Run it locally", description: "Run the MCP server on your machine, over stdio." },
+      { slug: "mcp-tools", title: "Tools reference", description: "Parameters and results of each tool." },
+    ],
+  },
 ]
 
 export const DOC_SECTIONS = SECTIONS.map((section) => ({

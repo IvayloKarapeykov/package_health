@@ -1,0 +1,60 @@
+## check_package
+
+Checks one package.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `package` | string, required | Package name, optionally with a version: `express`, `requests>=2.31`, `org.slf4j:slf4j-api` |
+| `ecosystem` | string | `auto` (default), `npm`, `pypi`, `maven`, `nuget`, `go`, `cargo`, `rubygems` or `packagist` |
+
+With `auto`, the registry is picked from the name's shape, or by where it's most used. See
+[Checking packages](/docs/checking-packages#let-it-find-the-registry).
+
+## check_dependencies
+
+Checks every dependency in a file. Takes longer, since up to 40 packages are checked, 8 at a time.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `content` | string, required | The full text of a dependency file |
+| `filename` | string | The file's name, if known. Otherwise the format is detected from the content |
+| `include_dev` | boolean | Also check development dependencies. Defaults to `true` |
+
+See [Dependency files](/docs/dependency-files) for every supported format.
+
+## What they return
+
+Both return a report as structured content:
+
+| Field | Description |
+| --- | --- |
+| `overallVerdict` | The worst verdict among the packages |
+| `summary` | One paragraph on the whole report |
+| `counts` | How many packages got each verdict |
+| `assessments` | One entry per package, worst first |
+| `skipped` | Dependencies that weren't checked, each with a reason |
+
+Each assessment has the package's `verdict`, `score`, `summary`, `reasons`, `findings`,
+`alternatives` and the raw `signals` behind them. Here's a real one, shortened:
+
+```json title="assessments[0]"
+{
+  "dependency": { "name": "request", "ecosystem": "npm", "requested": "^2.88.2" },
+  "verdict": "avoid",
+  "verdictSource": "rules",
+  "score": 0,
+  "summary": "request is officially deprecated and has had no releases or commits in roughly seven years, yet it still pulls ~15.3M weekly downloads…",
+  "alternatives": [
+    {
+      "name": "got",
+      "reason": "Actively maintained, promise-based HTTP client that was created specifically as the modern replacement for request, with built-in retries and hooks."
+    }
+  ]
+}
+```
+
+## Errors
+
+Input that can't be checked, like an invalid package name or an unreadable file, comes back as a
+tool error with a message your agent can act on. A data source that's down doesn't fail the call:
+the report notes it on the affected packages.
