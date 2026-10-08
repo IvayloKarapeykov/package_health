@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import rehypeSlug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
-import { defineConfig } from 'vite'
+import { defineConfig, type Rollup } from 'vite'
 
 interface HastNode {
   type: string
@@ -23,9 +23,20 @@ function rehypeCodeMeta() {
   return walk
 }
 
+const mdxPlugin = mdx({ remarkPlugins: [remarkGfm], rehypePlugins: [rehypeSlug, rehypeCodeMeta] })
+type TransformHook = (this: Rollup.TransformPluginContext, code: string, id: string) => Rollup.TransformResult | Promise<Rollup.TransformResult>
+const compileMdx = mdxPlugin.transform as TransformHook
+
 export default defineConfig({
   plugins: [
-    { enforce: 'pre', ...mdx({ remarkPlugins: [remarkGfm], rehypePlugins: [rehypeSlug, rehypeCodeMeta] }) },
+    {
+      ...mdxPlugin,
+      enforce: 'pre',
+      // Leave ?raw and other query imports to Vite: docs search reads the MDX source as text.
+      transform(code, id) {
+        return id.includes('?') ? null : compileMdx.call(this, code, id)
+      },
+    },
     react(),
     tailwindcss(),
   ],

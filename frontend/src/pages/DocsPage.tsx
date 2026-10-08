@@ -1,8 +1,9 @@
 import { Menu, X } from "lucide-react"
-import { Suspense, useRef, useState } from "react"
-import { Navigate, useParams } from "react-router"
+import { type RefObject, Suspense, useEffect, useRef, useState } from "react"
+import { Navigate, useLocation, useParams } from "react-router"
 
 import { DocsPager } from "@/components/docs/DocsPager"
+import { DocsSearch } from "@/components/docs/DocsSearch"
 import { DocsSidebar } from "@/components/docs/DocsSidebar"
 import { DocsToc } from "@/components/docs/DocsToc"
 import { SiteFooter } from "@/components/layout/SiteFooter"
@@ -14,6 +15,7 @@ export default function DocsPage() {
   const page = DOC_BY_SLUG[slug]
   const contentRef = useRef<HTMLElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  useScrollToHash(contentRef)
 
   if (!page) return <Navigate to={`/docs/${DOC_PAGES[0].slug}`} replace />
   const { Content } = page
@@ -22,10 +24,14 @@ export default function DocsPage() {
     <>
       <title>{`${page.title} · Docs · Package Health`}</title>
       <div className="mx-auto flex max-w-7xl gap-10 px-4 pt-24 pb-8 lg:px-6">
-        <DocsSidebar className="sticky top-24 hidden max-h-[calc(100svh-7rem)] w-56 shrink-0 self-start overflow-y-auto pb-8 lg:block" />
+        <div className="sticky top-24 hidden max-h-[calc(100svh-7rem)] w-56 shrink-0 self-start overflow-y-auto pb-8 lg:block">
+          <DocsSearch className="mb-6" />
+          <DocsSidebar />
+        </div>
 
         <main ref={contentRef} className="min-w-0 flex-1">
-          <div className="lg:hidden">
+          <div className="space-y-3 lg:hidden">
+            <DocsSearch />
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
@@ -36,7 +42,7 @@ export default function DocsPage() {
               {page.section}
             </button>
             {menuOpen && (
-              <DocsSidebar onNavigate={() => setMenuOpen(false)} className="glass mt-3 rounded-2xl p-3" />
+              <DocsSidebar onNavigate={() => setMenuOpen(false)} className="glass rounded-2xl p-3" />
             )}
           </div>
 
@@ -58,4 +64,31 @@ export default function DocsPage() {
       <SiteFooter />
     </>
   )
+}
+
+/** Scrolls to the URL's #section once it exists: pages load lazily, so it may not be there yet. */
+function useScrollToHash(containerRef: RefObject<HTMLElement | null>) {
+  const { hash, pathname } = useLocation()
+
+  useEffect(() => {
+    const container = containerRef.current
+    const id = decodeURIComponent(hash.slice(1))
+    if (!container || !id) return
+    const scrollIfReady = () => {
+      const target = document.getElementById(id)
+      if (!target) return false
+      target.scrollIntoView()
+      return true
+    }
+    if (scrollIfReady()) return
+    const observer = new MutationObserver(() => {
+      if (scrollIfReady()) observer.disconnect()
+    })
+    observer.observe(container, { childList: true, subtree: true })
+    const giveUp = setTimeout(() => observer.disconnect(), 5000)
+    return () => {
+      observer.disconnect()
+      clearTimeout(giveUp)
+    }
+  }, [containerRef, hash, pathname])
 }
