@@ -20,7 +20,7 @@ export const mdxComponents: MDXComponents = {
     </div>
   ),
   th: (props) => <th className="border-b border-border px-4 py-2.5 font-medium whitespace-nowrap" {...props} />,
-  td: (props) => <td className="border-b border-border/60 px-4 py-2.5 align-top text-foreground/85 [tr:last-child>&]:border-0" {...props} />,
+  td: (props) => <td className="border-b border-border/60 px-4 py-2.5 align-top text-foreground/85 [tr:last-child>&]:border-0 [&_code]:whitespace-nowrap" {...props} />,
   Note,
   Tip,
   Warning,

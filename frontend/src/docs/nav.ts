@@ -27,6 +27,19 @@ const SECTIONS: { title: string; pages: Omit<DocPage, "section" | "Content">[] }
       },
     ],
   },
+  {
+    title: "Using the app",
+    pages: [
+      {
+        slug: "checking-packages",
+        title: "Checking packages",
+        description: "Auto-detection, versions and your recent searches.",
+      },
+      { slug: "dependency-files", title: "Dependency files", description: "Every supported file, and what's read from it." },
+      { slug: "reading-a-report", title: "Reading a report", description: "What each part of a report tells you." },
+      { slug: "your-keys", title: "Your keys", description: "Use your own GitHub and OpenRouter keys, safely." },
+    ],
+  },
 ]
 
 export const DOC_SECTIONS = SECTIONS.map((section) => ({

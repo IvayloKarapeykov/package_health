@@ -1,0 +1,42 @@
+Switch to **Dependency file** and paste the contents of a supported file. The format is detected
+from the content, and the editor shows the file it recognized. **Load example** fills in a sample
+for any format.
+
+## Supported files
+
+| File | What's read |
+| --- | --- |
+| `package.json` | `dependencies`, `peerDependencies`, `optionalDependencies`, `devDependencies` |
+| `package-lock.json`, `pnpm-lock.yaml` | The project's direct dependencies, with their exact installed versions |
+| `requirements.txt` | One requirement per line. Options like `-r` or `--index-url` are ignored |
+| `pyproject.toml` | PEP 621, Poetry, PEP 735 dependency groups and uv |
+| `Pipfile` | `packages` and `dev-packages` |
+| `pom.xml` | `<dependencies>`, with `test` scope counted as dev |
+| `build.gradle`, `build.gradle.kts` | Dependencies, with `test…` configurations counted as dev |
+| `*.csproj`, `Directory.Packages.props` | Package references. `PrivateAssets="all"` counts as dev |
+| `go.mod` | Direct requirements. `// indirect` ones are skipped |
+| `Cargo.toml` | Dependencies, dev and build dependencies, workspaces and targets |
+| `Gemfile` | Gems, with the `development` and `test` groups counted as dev |
+| `composer.json` | `require` and `require-dev` |
+
+<Tip>
+  Lockfiles give the most precise results. They contain the exact installed versions, so "your
+  version is vulnerable" checks the version you really run, not the bottom of a range.
+</Tip>
+
+## What gets skipped
+
+Anything that doesn't come from the registry is listed in the report as skipped, with the reason:
+
+- Git, path, URL and workspace installs
+- Platform requirements, like `php` or `ext-json` in `composer.json`
+- Lines that aren't a valid requirement
+
+## Dev dependencies
+
+**Include dev dependencies** is on by default. Turn it off to check only what ships to production.
+
+## Limits
+
+Up to 40 packages per file, checked 8 at a time. Packages past the limit are listed as skipped. If a
+package appears in more than one section, it's checked once, in the first section it appears in.

@@ -1,0 +1,46 @@
+## Let it find the registry
+
+Leave the registry on **Auto-detect** and the name's shape decides where to look:
+
+| You type | Looked up in |
+| --- | --- |
+| `@scope/name` | npm |
+| `group:artifact` | Maven |
+| `vendor/package` | Packagist |
+| `github.com/owner/repo` | Go |
+| A plain name like `requests` | Every registry where it's a valid name, at the same time |
+
+When a plain name exists in several registries, the one where it's most used wins. The report says
+where it was found and lists the others, so you can switch with one click.
+
+<Tip>
+  Pick a registry from the list to skip detection. It's slightly faster and avoids surprises with
+  common names.
+</Tip>
+
+## Check a specific version
+
+Add a version the way the ecosystem writes it. Vulnerabilities are then also checked against that
+exact version, not just the latest one.
+
+| Ecosystem | Example |
+| --- | --- |
+| npm | `express@4.19.2` |
+| PyPI | `requests==2.31.0` or `django>=4.2` |
+| Maven | `org.slf4j:slf4j-api:2.0.9` |
+| NuGet | `Newtonsoft.Json@13.0.3` |
+| Go | `github.com/gin-gonic/gin@v1.9.1` |
+| crates.io | `serde@1.0.200` |
+| RubyGems | `rails@7.1.3` |
+| Packagist | `laravel/framework:^11.0` |
+
+<Note>
+  A bare version pins exactly everywhere except crates.io, where `1.2.3` means `^1.2.3`, just like
+  in `Cargo.toml`.
+</Note>
+
+## Recent searches
+
+Finished reports are saved in your browser and listed under the search box. Opening one shows the
+saved report instantly, with a note that it's from earlier and a button to run it again for fresh
+data. You can remove one search or clear them all. Nothing is stored on the server.

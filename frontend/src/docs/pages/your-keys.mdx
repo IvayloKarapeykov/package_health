@@ -1,0 +1,48 @@
+Everything works without keys. Add your own to raise your limits and turn on AI verdicts. You pay the
+providers directly, and nothing is billed through this site.
+
+| Key | Without it | With it |
+| --- | --- | --- |
+| GitHub token | GitHub data shares 60 requests an hour with everyone | Your own 5,000 requests an hour |
+| OpenRouter key | Rule-based verdicts and template reasons | Verdicts from Jev and reasons written by an LLM |
+
+## Add them
+
+<Steps>
+
+### Open the keys dialog
+
+In [the analyzer](/app?keys), select **Add keys** in the search panel.
+
+### Create a GitHub token
+
+On GitHub, create a [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new)
+with **Public repositories (read-only)** access and no extra permissions. It can read public data and
+nothing else.
+
+### Create an OpenRouter key
+
+Create a key on [OpenRouter](https://openrouter.ai/keys). Give it a credit limit if you like.
+
+### Paste and save
+
+Either key works on its own. A green dot on the button shows keys are saved.
+
+</Steps>
+
+## How keys are handled
+
+- They're saved in your browser only. There's no account.
+- Each check sends them over HTTPS to the analysis server as request headers. The server uses them for
+  that check and never saves or logs them.
+- **Remove keys** in the same dialog deletes them from your browser.
+
+You don't have to take this on trust: the server reads them in
+[`credentials.py`](https://github.com/IvayloKarapeykov/package_health/blob/main/backend/app/domain/credentials.py)
+and passes them straight to the clients for that one request.
+
+<Warning>
+  Like anything saved in a browser, keys are readable by anyone with access to your device. Use a
+  read-only GitHub token and a credit limit on the OpenRouter key, and a leaked key can do very
+  little.
+</Warning>
