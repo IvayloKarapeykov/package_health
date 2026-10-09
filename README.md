@@ -175,6 +175,7 @@ cd backend
 .venv/bin/python -m pytest      # tests
 .venv/bin/ruff check app tests  # lint
 npx pyright                     # type check, run from the repo root
+.venv/bin/pip install -r requirements-studio.txt  # once, for LangGraph Studio
 .venv/bin/langgraph dev         # open the graph in LangGraph Studio
 ```
 

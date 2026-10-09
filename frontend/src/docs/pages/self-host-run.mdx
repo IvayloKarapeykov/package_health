@@ -47,8 +47,12 @@ The analysis is a LangGraph agent. LangGraph Studio shows each step as it runs:
 
 ```bash
 cd backend
+.venv/bin/pip install -r requirements-studio.txt
 .venv/bin/langgraph dev
 ```
+
+Studio's requirements are kept separate because they need an older FastAPI than the API itself
+uses.
 
 Studio opens in your browser. Pick the `package_health` graph and send it input like:
 
