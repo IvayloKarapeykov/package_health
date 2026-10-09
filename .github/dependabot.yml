@@ -5,6 +5,10 @@ updates:
     schedule:
       interval: weekly
     target-branch: dev
+    ignore:
+      # Raising FastAPI's minimum past 0.141 would make Studio's requirements unsatisfiable (see
+      # backend/requirements-studio.txt). Deploys install the newest FastAPI regardless.
+      - dependency-name: fastapi
     groups:
       backend:
         patterns: ["*"]
