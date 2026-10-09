@@ -1,0 +1,5 @@
+# LangGraph Studio (`langgraph dev`). Kept apart from the dev tools because langgraph-cli[inmem]
+# needs an OpenTelemetry release older than FastAPI 0.142+ accepts, so installing it caps FastAPI.
+-r requirements-dev.txt
+langgraph-cli[inmem]>=0.4.32
+fastapi<0.142

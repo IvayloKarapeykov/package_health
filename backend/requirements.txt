@@ -1,10 +1,10 @@
 fastapi>=0.141
-uvicorn[standard]>=0.53
-sse-starlette>=3.4
-httpx>=0.28
-pydantic>=2.13
+uvicorn[standard]>=0.54.0
+sse-starlette>=3.5.0
+httpx>=0.28.1
+pydantic>=2.13.5
 pydantic-settings>=2.15
-langgraph>=1.2
+langgraph>=1.2.13
 mcp>=2.3
-langchain-openai>=1.6
-pyyaml>=6.0
+langchain-openai>=1.6.7
+pyyaml>=6.0.3
